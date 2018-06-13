@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 26
@@ -13,16 +13,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    String libName = name;
-    libraryVariants.all { variant ->
-        variant.outputs.each { output ->
-            String outName = output.outputFile.name.replace(".aar", "-${defaultConfig.versionName}.aar")
-            outName = outName.replace(libName, "mobilePay")
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    outName)
         }
     }
     productFlavors {
