@@ -26,8 +26,11 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
 
     private static final String TAG = "AssistTokenPayProcessor";
 
-    public AssistTokenPayProcessor(Context context, AssistProcessorEnvironment environment) {
+    String type;
+
+    public AssistTokenPayProcessor(Context context, AssistProcessorEnvironment environment, String type) {
         super(context, environment);
+        this.type = type;
     }
 
     @Override
@@ -80,7 +83,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
             }
 
             content.append(URLEncoder.encode("TokenType", "UTF-8")).append("=");
-            content.append(URLEncoder.encode("2", "UTF-8")).append("&");
+            content.append(URLEncoder.encode(type, "UTF-8")).append("&");
 
             content.append(URLEncoder.encode("PaymentToken", "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.PaymentToken), "UTF-8")).append("&");
@@ -135,6 +138,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
             responseFields.put("meansubtype", "");
             responseFields.put("meannumber", "");
             responseFields.put("cardholder", "");
+            responseFields.put("cardexpirationdate", "");
             responseFields.put("issuebank", "");
             responseFields.put("bankcountry", "");
             responseFields.put("orderdate", "");
@@ -205,6 +209,10 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
                     result.setApprovalCode(responseFields.get("approvalcode"));
                     result.setBillNumber(responseFields.get("billnumber"));
                     result.setExtra(responseFields.get("responsecode") + " " + responseFields.get("customermessage"));
+                    result.setMeantypeName(responseFields.get("meantypename"));
+                    result.setMeanNumber(responseFields.get("meannumber"));
+                    result.setCardholder(responseFields.get("cardholder"));
+                    result.setCardExpirationDate(responseFields.get("cardexpirationdate"));
 
                     if ("AS000".equalsIgnoreCase(responseFields.get("responsecode"))) {
                         result.setOrderState(AssistResult.OrderState.APPROVED);

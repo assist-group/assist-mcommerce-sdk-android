@@ -153,6 +153,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
             responseFields.put("meansubtype", "");
             responseFields.put("meannumber", "");
             responseFields.put("cardholder", "");
+            responseFields.put("cardexpirationdate", "");
             responseFields.put("issuebank", "");
             responseFields.put("bankcountry", "");
             responseFields.put("orderdate", "");
@@ -223,6 +224,10 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
                     result.setApprovalCode(responseFields.get("approvalcode"));
                     result.setBillNumber(responseFields.get("billnumber"));
                     result.setExtra(responseFields.get("responsecode") + " " + responseFields.get("customermessage"));
+                    result.setMeantypeName(responseFields.get("meantypename"));
+                    result.setMeanNumber(responseFields.get("meannumber"));
+                    result.setCardholder(responseFields.get("cardholder"));
+                    result.setCardExpirationDate(responseFields.get("cardexpirationdate"));
 
                     if ("AS000".equalsIgnoreCase(responseFields.get("responsecode"))) {
                         result.setOrderState(AssistResult.OrderState.APPROVED);

@@ -125,6 +125,10 @@ public class AssistResultProcessor extends AssistBaseProcessor {
                     result.setBillNumber(orderResult.getOrder().billnumber);
                     if (orderResult.getOrder().getLastOperation() != null) {
                         result.setExtra(orderResult.getOrder().getLastOperation().usermessage);
+                        result.setCardholder(orderResult.getOrder().getLastOperation().cardholder);
+                        result.setMeanNumber(orderResult.getOrder().getLastOperation().meannumber);
+                        result.setMeantypeName(orderResult.getOrder().getLastOperation().meantypename);
+                        result.setCardExpirationDate(orderResult.getOrder().getLastOperation().cardexpirationdate);
                     }
                 } else if (fault != null) {
                     result.setExtra(fault.faultcode + " (" + fault.faultstring + ")");
@@ -212,6 +216,10 @@ public class AssistResultProcessor extends AssistBaseProcessor {
         String responsecode;
         String approvalcode;
         String usermessage;
+        String cardholder;
+        String cardexpirationdate;
+        String meantypename;
+        String meannumber;
 
         Operation(XmlPullParser parser) throws XmlPullParserException, IOException {
             while (!endOfTag(parser, Operation.TAG)) {
@@ -231,6 +239,18 @@ public class AssistResultProcessor extends AssistBaseProcessor {
                             break;
                         case "usermessage":
                             usermessage = XmlHelper.readValue(parser, "usermessage");
+                            break;
+                        case "cardholder":
+                            cardholder = XmlHelper.readValue(parser, "cardholder");
+                            break;
+                        case "cardexpirationdate":
+                            cardexpirationdate = XmlHelper.readValue(parser, "cardexpirationdate");
+                            break;
+                        case "meantypename":
+                            meantypename = XmlHelper.readValue(parser, "meantypename");
+                            break;
+                        case "meannumber":
+                            meannumber = XmlHelper.readValue(parser, "meannumber");
                             break;
                     }
                 }

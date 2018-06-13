@@ -23,6 +23,12 @@ public class AssistResult {
      */
     private String orderNumber;
 
+    private String meantypeName;
+    private String meanNumber;
+    private String cardholder;
+    private String cardExpirationDate;
+
+
     /**
      * Possible order state values
      */
@@ -252,6 +258,18 @@ public class AssistResult {
     public String getOrderNumber() {
         return orderNumber;
     }
+
+    public void setMeantypeName(String value) { meantypeName = value; }
+    public String getMeantypeName() { return meantypeName; }
+
+    public void setMeanNumber(String value) { meanNumber = value; }
+    public String getMeanNumber() { return meanNumber; }
+
+    public void setCardholder(String value) { cardholder = value; }
+    public String getCardholder() {return cardholder; }
+
+    public void setCardExpirationDate(String value) { cardExpirationDate = value; }
+    public String getCardExpirationDate() { return cardExpirationDate; }
 
     /**
      * Used in web payment
