@@ -22,6 +22,8 @@ Assist Mobile SDK
 В класcе ConfirmationActivity представлена окончательная инциализация AssistPaymentEngine и запуск платежа.
 Так же здесь представлен пример работы с кошельком Google в рамках работы с AndroidPay.
 
+**Поддержка AndroidPay**
+
 Для работы с AndroidPay рекомендуется предварительно ознакомиться с документацией на сайте разработчика
 https://developers.google.com/android-pay/.
 
@@ -29,3 +31,11 @@ https://developers.google.com/android-pay/.
 Поэтому для определения возможности проведения тестового платежа требуется связаться
 со службой поддержки Ассист support@assist.ru
 
+**Поддержка SamsungPay**
+
+Для использования SamsungPay в вашем приложении, вам необходимо зарегистрироваться в Samsung и зарегистрировать свое приложение, затем получить SamsungPay SDK. Смотрите http://www.samsung.com/ru/apps/mobile/samsungpay/.
+
+Затем вам нужно создать запрос на сертификат и выпустить сертификат магазина в Samsung и передать его в assist для подключения услуги SamsungPay вашему аккаунту через support@assist.ru.
+
+В вашем приложении вы должны следовать инструкции Samsung для инициации платежа через SamsungPay.
+Для завершения оплаты SamsungPay вам необходимо передать данные полученные из SamsungPay SDK в Assist через функцию  AssistPayEngine.payToken().
