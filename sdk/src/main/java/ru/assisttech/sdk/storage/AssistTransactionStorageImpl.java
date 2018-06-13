@@ -381,6 +381,7 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             if (oldVersion != newVersion) {
+                db.delete(DB_TABLE_TRANSACTIONS, null, null);
                 db.execSQL(DB_DROP_TABLE);
                 db.execSQL(DB_CREATE);
             }
