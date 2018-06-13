@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -69,6 +70,7 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         webProcessor =  AssistPayEngine.getInstance(this).getWebProcessor();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         initUI();
 	}
 
