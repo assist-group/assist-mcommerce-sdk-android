@@ -25,7 +25,7 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
 	private final String TAG = "TransactionStorage";
 	
 	private static final String DB_NAME = "transactionsdb";
-	private static final int DB_VERSION = 12;
+	private static final int DB_VERSION = 13;
 	private static final String DB_TABLE_TRANSACTIONS = "trans";
 
 	public static final String COLUMN_ORDER_MID = "omid";
@@ -44,6 +44,10 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
     public static final String COLUMN_USER_SIGNATURE_REQUIREMENT = "req_usign";
 	public static final String COLUMN_USER_SIGNATURE = "usign";
     public static final String COLUMN_ORDER_ITEMS_JSON = "oitems";
+    public static final String COLUMN_MEANNUMBER = "meann";
+    public static final String COLUMN_MEANTYPENAME = "meant";
+    public static final String COLUMN_CARDEXPIRATIONDATE = "cexp";
+    public static final String COLUMN_CARDHOLDER = "chold";
 
     private final Context mCtx;
 
@@ -69,6 +73,10 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
             COLUMN_ORDER_APPROVAL_CODE + " text, " +
             COLUMN_ORDER_EXTRA_INFO + " text, " +
             COLUMN_BILL_NUMBER + " text, " +
+            COLUMN_MEANNUMBER + " text, " +
+            COLUMN_MEANTYPENAME + " text, " +
+            COLUMN_CARDHOLDER + " text, " +
+            COLUMN_CARDEXPIRATIONDATE + " text, " +
             COLUMN_USER_SIGNATURE_REQUIREMENT + " integer not null, " +
             COLUMN_USER_SIGNATURE + " blob " +
             ");";
@@ -123,6 +131,10 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
         cv.put(COLUMN_ORDER_EXTRA_INFO, t.getResult().getExtra());
         cv.put(COLUMN_BILL_NUMBER, t.getResult().getBillNumber());
         cv.put(COLUMN_USER_SIGNATURE_REQUIREMENT, t.isRequireUserSignature() ? 1 : 0);
+        cv.put(COLUMN_CARDHOLDER, t.getResult().getCardholder());
+        cv.put(COLUMN_CARDEXPIRATIONDATE, t.getResult().getCardExpirationDate());
+        cv.put(COLUMN_MEANNUMBER, t.getResult().getMeanNumber());
+        cv.put(COLUMN_MEANTYPENAME, t.getResult().getMeantypeName());
 		
 		long id = db.insert(DB_TABLE_TRANSACTIONS, null, cv);
 		dbHelper.close();
@@ -172,6 +184,10 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
             cv.put(COLUMN_ORDER_APPROVAL_CODE, result.getApprovalCode());
             cv.put(COLUMN_ORDER_EXTRA_INFO, result.getExtra());
             cv.put(COLUMN_BILL_NUMBER, result.getBillNumber());
+            cv.put(COLUMN_MEANNUMBER, result.getMeanNumber());
+            cv.put(COLUMN_MEANTYPENAME, result.getMeantypeName());
+            cv.put(COLUMN_CARDHOLDER, result.getCardholder());
+            cv.put(COLUMN_CARDEXPIRATIONDATE, result.getCardExpirationDate());
         }
         updateTransactionsTable(id, cv);
     }
@@ -335,6 +351,10 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
         result.setApprovalCode(cursor.getString(cursor.getColumnIndex(COLUMN_ORDER_APPROVAL_CODE)));
         result.setExtra(cursor.getString(cursor.getColumnIndex(COLUMN_ORDER_EXTRA_INFO)));
         result.setBillNumber(cursor.getString(cursor.getColumnIndex(COLUMN_BILL_NUMBER)));
+        result.setCardExpirationDate(cursor.getString(cursor.getColumnIndex(COLUMN_CARDEXPIRATIONDATE)));
+        result.setCardholder(cursor.getString(cursor.getColumnIndex(COLUMN_CARDHOLDER)));
+        result.setMeantypeName(cursor.getString(cursor.getColumnIndex(COLUMN_MEANTYPENAME)));
+        result.setMeanNumber(cursor.getString(cursor.getColumnIndex(COLUMN_MEANNUMBER)));
 
         AssistTransaction tr = new AssistTransaction();
         tr.setResult(result);
