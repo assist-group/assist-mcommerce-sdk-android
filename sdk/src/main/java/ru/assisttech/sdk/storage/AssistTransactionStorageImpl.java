@@ -25,7 +25,7 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
 	private final String TAG = "TransactionStorage";
 	
 	private static final String DB_NAME = "transactionsdb";
-	private static final int DB_VERSION = 9;
+	private static final int DB_VERSION = 12;
 	private static final String DB_TABLE_TRANSACTIONS = "trans";
 
 	public static final String COLUMN_ORDER_MID = "omid";
