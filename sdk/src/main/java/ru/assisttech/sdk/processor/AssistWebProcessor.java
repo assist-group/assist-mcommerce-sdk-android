@@ -127,6 +127,14 @@ public class AssistWebProcessor extends AssistBaseProcessor {
     }
 
     @Override
+	protected void finish() {
+		if (webContentView != null) {
+			webContentView.close();
+		}
+		super.finish();
+	}
+
+    @Override
     protected void terminate() {
 		if (webContentView != null) {
 			webContentView.close();
