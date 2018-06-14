@@ -155,14 +155,14 @@ public class AssistPayEngine {
         }
     }
 
-    public void payToken(Activity caller, AssistPaymentData data) {
-        payToken(caller, buildServiceEnvironment(data));
+    public void payToken(Activity caller, AssistPaymentData data, String type) {
+        payToken(caller, buildServiceEnvironment(data), type);
     }
 
     /**
      * Платеж с токеном Android Pay
      */
-    public void payToken(Activity caller, AssistProcessorEnvironment environment) {
+    public void payToken(Activity caller, AssistProcessorEnvironment environment, String type) {
 
         if (isEngineReady()) {
             saveCallerActivity(caller);
@@ -182,7 +182,7 @@ public class AssistPayEngine {
             }
             t.setPaymentMethod(CARD_TERMINAL);
 
-            processor = new AssistTokenPayProcessor(getContext(), environment);
+            processor = new AssistTokenPayProcessor(getContext(), environment, type);
             processor.setNetEngine(netEngine);
             processor.setURL(getTokenPayeServiceUrl());
             processor.setListener(new TokenPayProcessorListener());

@@ -98,6 +98,12 @@
             android:background="@android:color/darker_gray"
             android:visibility="gone"/>
 
+        <Button
+            android:id="@+id/btSamsungPay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Оплатить с SamsungPay"/>
+
         <FrameLayout
             android:id="@+id/dynamic_wallet_button_fragment"
             android:layout_width="match_parent"

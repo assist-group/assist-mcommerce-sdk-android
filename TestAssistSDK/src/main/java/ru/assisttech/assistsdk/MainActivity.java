@@ -2,8 +2,10 @@ package ru.assisttech.assistsdk;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,10 +14,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 import ru.assisttech.sdk.AssistPaymentData;
 import ru.assisttech.sdk.AssistSDK;
@@ -60,6 +65,7 @@ public class MainActivity extends FragmentActivity {
     private AssistPayEngine engine;
     protected AssistPaymentData data;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -84,12 +90,13 @@ public class MainActivity extends FragmentActivity {
         spURL = (Spinner)findViewById(R.id.spURL);
         cbUseCamera = (CheckBox)findViewById(R.id.cbUseCamera);
         btPay = (Button)findViewById(R.id.btPay);
-        btLog = (Button)findViewById(R.id.btLog);
 
         // Set defaults
         etMerchantId.setText(DEFAULT_MID);
         etLogin.setText(DEFAULT_LOGIN);
         etPassword.setText(DEFAULT_PASSWORD);
+
+        btLog = (Button)findViewById(R.id.btLog);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
@@ -212,4 +219,5 @@ public class MainActivity extends FragmentActivity {
         Intent i = new Intent(this, ConfirmationActivity.class);
         startActivity(i);
     }
+
 }
