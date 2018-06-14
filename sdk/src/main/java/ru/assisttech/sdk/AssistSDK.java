@@ -9,7 +9,7 @@ import ru.assisttech.sdk.engine.AssistPayEngine;
  */
 public class AssistSDK {
 
-	private static final String SDK_VERSION = "1.4.2";
+	private static final String SDK_VERSION = "1.5.0";
 
 	public static AssistPayEngine getPayEngine(Activity activity) {
 		return AssistPayEngine.getInstance(activity.getApplicationContext());
