@@ -58,7 +58,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
         try {
             Map<String, String> params = data.getFields();
 
-            content.append(URLEncoder.encode("Merchant_ID", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Merchant_ID, "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getID(), "UTF-8")).append("&");
 
             content.append(URLEncoder.encode("Login", "UTF-8")).append("=");
@@ -67,17 +67,17 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
             content.append(URLEncoder.encode("Password", "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getPassword(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("OrderNumber", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.OrderNumber, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderNumber), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("OrderAmount", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.OrderAmount, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("OrderCurrency", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.OrderCurrency, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
 
             if (params.get(FieldName.OrderComment) != null) {
-                content.append(URLEncoder.encode("OrderComment", "UTF-8")).append("=");
+                content.append(URLEncoder.encode(FieldName.OrderComment, "UTF-8")).append("=");
                 content.append(URLEncoder.encode(params.get(FieldName.OrderComment), "UTF-8")).append("&");
             }
 
@@ -96,13 +96,13 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
             content.append(URLEncoder.encode("Cvc2", "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.CVC2), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Lastname", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Lastname, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.Lastname), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Firstname", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Firstname, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.Firstname), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Email", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Email, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.Email), "UTF-8")).append("&");
 
             /**
