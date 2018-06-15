@@ -2,19 +2,27 @@ package ru.assisttech.sdk;
 
 /**
  * Result of payment
+ *
  * @author sergei
  * @version 1.0
- *
  */
 public class AssistResult {
 
-    /** Status of payment result **/
+    /**
+     * Status of payment result
+     **/
     private OrderState state;
-    /** Result code **/
+    /**
+     * Result code
+     **/
     private String approvalCode;
-    /** Number of payment in Assist **/
+    /**
+     * Number of payment in Assist
+     **/
     private String billNumber;
-    /** Additional information**/
+    /**
+     * Additional information
+     **/
     private String extraInfo;
     /**
      * Order number returned by Assist payment system
@@ -33,7 +41,9 @@ public class AssistResult {
      * Possible order state values
      */
     public enum OrderState {
-        UNKNOWN,        /** application level status (does not exist in Assist) **/
+        UNKNOWN, /**
+         * application level status (does not exist in Assist)
+         **/
         IN_PROCESS,
         DELAYED,
         APPROVED,
@@ -43,8 +53,14 @@ public class AssistResult {
         PARTIAL_CANCELED,
         DECLINED,
         TIMEOUT,
-        CANCEL_ERROR,   /** application level status (does not exist in Assist) **/
-        NON_EXISTENT;   /** application level status (does not exist in Assist) **/
+        CANCEL_ERROR, /**
+         * application level status (does not exist in Assist)
+         **/
+        NON_EXISTENT;
+
+        /**
+         * application level status (does not exist in Assist)
+         **/
 
         public String toString() {
             switch (this) {
@@ -154,37 +170,39 @@ public class AssistResult {
 
     }
 
-	public AssistResult(){
-		state = OrderState.UNKNOWN;
-	}
-	
-	public AssistResult(OrderState os){
-		if (os == null) {
-			state = OrderState.UNKNOWN;
-		} else {
-			state = os;
-		}	
-	}	
-	
-	public AssistResult(OrderState os, String extra){
-		if (os == null) {
-			state = OrderState.UNKNOWN;
-		} else {
-			state = os;
-		}
-		extraInfo = extra;
-	}	
-	
+    public AssistResult() {
+        state = OrderState.UNKNOWN;
+    }
+
+    public AssistResult(OrderState os) {
+        if (os == null) {
+            state = OrderState.UNKNOWN;
+        } else {
+            state = os;
+        }
+    }
+
+    public AssistResult(OrderState os, String extra) {
+        if (os == null) {
+            state = OrderState.UNKNOWN;
+        } else {
+            state = os;
+        }
+        extraInfo = extra;
+    }
+
     /**
      * Set {@link AssistResult#state}
+     *
      * @param os
      */
-    public void setOrderState(OrderState os){
-    	state = os;
-    }	
-    
+    public void setOrderState(OrderState os) {
+        state = os;
+    }
+
     /**
      * Set {@link AssistResult#state} as String
+     *
      * @param value
      */
     public void setOrderState(String value) {
@@ -193,86 +211,115 @@ public class AssistResult {
         } else {
             setOrderState(OrderState.fromString(value));
         }
-    }    
-	
-	/**
-	 * Returns order state
-	 * @return {@link AssistResult#state} as String
-	 */
-    public OrderState getOrderState() {
-	    return state;
-    }    
-        
+    }
+
     /**
-     * Get payment number in Assist 
+     * Returns order state
+     *
+     * @return {@link AssistResult#state} as String
+     */
+    public OrderState getOrderState() {
+        return state;
+    }
+
+    /**
+     * Get payment number in Assist
+     *
      * @return {@link AssistResult#billNumber}
      */
     public String getBillNumber() {
-    	return billNumber;
+        return billNumber;
     }
-    
+
     /**
      * Set {@link AssistResult#billNumber}
+     *
      * @param value
      */
     public void setBillNumber(String value) {
-    	billNumber = value;
+        billNumber = value;
     }
-    
+
     /**
-     * Set {@link AssistResult#approvalCode}     
-     * @param code  
+     * Set {@link AssistResult#approvalCode}
+     *
+     * @param code
      */
     public void setApprovalCode(String code) {
-    	approvalCode = code;
-    }    
-    
-	/**
-	 * Get result code
-	 * @return {@link AssistResult#approvalCode}
-	 */
-    public String getApprovalCode() {
-	    return approvalCode;
+        approvalCode = code;
     }
-    
+
     /**
-     * Set {@link AssistResult#extraInfo}     
-     * @param value  
+     * Get result code
+     *
+     * @return {@link AssistResult#approvalCode}
+     */
+    public String getApprovalCode() {
+        return approvalCode;
+    }
+
+    /**
+     * Set {@link AssistResult#extraInfo}
+     *
+     * @param value
      */
     public void setExtra(String value) {
-    	extraInfo = value;
-    }    
-    
-	/**
-	 * Get additional information (i.e. error reason, ..)
-	 * @return {@link AssistResult#extraInfo}
-	 */
+        extraInfo = value;
+    }
+
+    /**
+     * Get additional information (i.e. error reason, ..)
+     *
+     * @return {@link AssistResult#extraInfo}
+     */
     public String getExtra() {
-	    return extraInfo;
+        return extraInfo;
     }
 
     /**
      * Used in web payment
+     *
      * @return order number
      */
     public String getOrderNumber() {
         return orderNumber;
     }
 
-    public void setMeantypeName(String value) { meantypeName = value; }
-    public String getMeantypeName() { return meantypeName; }
+    public void setMeantypeName(String value) {
+        meantypeName = value;
+    }
 
-    public void setMeanNumber(String value) { meanNumber = value; }
-    public String getMeanNumber() { return meanNumber; }
+    public String getMeantypeName() {
+        return meantypeName;
+    }
 
-    public void setCardholder(String value) { cardholder = value; }
-    public String getCardholder() {return cardholder; }
+    public void setMeanNumber(String value) {
+        meanNumber = value;
+    }
 
-    public void setCardExpirationDate(String value) { cardExpirationDate = value; }
-    public String getCardExpirationDate() { return cardExpirationDate; }
+    public String getMeanNumber() {
+        return meanNumber;
+    }
+
+    public void setCardholder(String value) {
+        cardholder = value;
+    }
+
+    public String getCardholder() {
+        return cardholder;
+    }
+
+    public void setCardExpirationDate(String value) {
+        cardExpirationDate = value;
+    }
+
+    public String getCardExpirationDate() {
+        return cardExpirationDate;
+    }
 
     /**
      * Used in web payment
+     *
      * @param value order number returned by Assist
      */
     public void setOrderNumber(String value) {
@@ -290,9 +337,9 @@ public class AssistResult {
     public boolean isDelayed() {
         return (OrderState.DELAYED == state);
     }
-    
+
     public boolean isApproved() {
-    	return (OrderState.APPROVED == state);
+        return (OrderState.APPROVED == state);
     }
 
     public boolean isPartialApproved() {
@@ -310,9 +357,9 @@ public class AssistResult {
     public boolean isPartialCanceled() {
         return (OrderState.PARTIAL_CANCELED == state);
     }
-    
+
     public boolean isDeclined() {
-    	return (OrderState.DECLINED == state);
+        return (OrderState.DECLINED == state);
     }
 
     public boolean isTimeout() {

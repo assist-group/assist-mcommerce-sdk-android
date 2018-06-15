@@ -21,28 +21,28 @@ import ru.assisttech.sdk.AssistPaymentData.Currency;
 import ru.assisttech.sdk.AssistResult;
 
 public class AssistTransactionStorageImpl implements AssistTransactionStorage {
-	
-	private final String TAG = "TransactionStorage";
-	
-	private static final String DB_NAME = "transactionsdb";
-	private static final int DB_VERSION = 13;
-	private static final String DB_TABLE_TRANSACTIONS = "trans";
 
-	public static final String COLUMN_ORDER_MID = "omid";
+    private final String TAG = "TransactionStorage";
+
+    private static final String DB_NAME = "transactionsdb";
+    private static final int DB_VERSION = 13;
+    private static final String DB_TABLE_TRANSACTIONS = "trans";
+
+    public static final String COLUMN_ORDER_MID = "omid";
     public static final String COLUMN_ORDER_DATE_UTC = "odate";
     public static final String COLUMN_ORDER_DATE_DEVICE = "ddate";
     public static final String COLUMN_ORDER_DATE_DEVICE_MILLIS = "otime_millis";
-	public static final String COLUMN_ORDER_NUMBER = "onum";
-	public static final String COLUMN_ORDER_COMMENT = "ocom";
-	public static final String COLUMN_ORDER_AMOUNT = "oamt";
-	public static final String COLUMN_ORDER_CURRENCY = "ocur";
-	public static final String COLUMN_PAYMENT_METHOD = "pmtd";
-	public static final String COLUMN_ORDER_STATE = "ostat";
-	public static final String COLUMN_ORDER_APPROVAL_CODE = "oacode";
-	public static final String COLUMN_ORDER_EXTRA_INFO = "oextra";
-	public static final String COLUMN_BILL_NUMBER = "bnum";
+    public static final String COLUMN_ORDER_NUMBER = "onum";
+    public static final String COLUMN_ORDER_COMMENT = "ocom";
+    public static final String COLUMN_ORDER_AMOUNT = "oamt";
+    public static final String COLUMN_ORDER_CURRENCY = "ocur";
+    public static final String COLUMN_PAYMENT_METHOD = "pmtd";
+    public static final String COLUMN_ORDER_STATE = "ostat";
+    public static final String COLUMN_ORDER_APPROVAL_CODE = "oacode";
+    public static final String COLUMN_ORDER_EXTRA_INFO = "oextra";
+    public static final String COLUMN_BILL_NUMBER = "bnum";
     public static final String COLUMN_USER_SIGNATURE_REQUIREMENT = "req_usign";
-	public static final String COLUMN_USER_SIGNATURE = "usign";
+    public static final String COLUMN_USER_SIGNATURE = "usign";
     public static final String COLUMN_ORDER_ITEMS_JSON = "oitems";
     public static final String COLUMN_MEANNUMBER = "meann";
     public static final String COLUMN_MEANTYPENAME = "meant";
@@ -53,46 +53,46 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
 
     private String dbName;
     private DBHelper dbHelper;
-		
-	private AssistTransactionFilter transactionFilter;
 
-	private static final String DB_CREATE = 
+    private AssistTransactionFilter transactionFilter;
+
+    private static final String DB_CREATE =
             "create table " + DB_TABLE_TRANSACTIONS + "(" +
-            BaseColumns._ID + " integer primary key autoincrement, " +
-            COLUMN_ORDER_DATE_DEVICE_MILLIS + " integer not null, " +
-            COLUMN_ORDER_MID + " text not null, " +
-            COLUMN_ORDER_DATE_UTC + " text not null, " +
-            COLUMN_ORDER_DATE_DEVICE + " text not null, " +
-            COLUMN_ORDER_NUMBER + " text not null, " +
-            COLUMN_ORDER_COMMENT + " text, " +
-            COLUMN_ORDER_AMOUNT + " numeric not null, " +
-            COLUMN_ORDER_CURRENCY + " text not null, " +
-            COLUMN_ORDER_ITEMS_JSON + " text, " +
-            COLUMN_PAYMENT_METHOD + " text not null, " +
-            COLUMN_ORDER_STATE + " text not null, " +
-            COLUMN_ORDER_APPROVAL_CODE + " text, " +
-            COLUMN_ORDER_EXTRA_INFO + " text, " +
-            COLUMN_BILL_NUMBER + " text, " +
-            COLUMN_MEANNUMBER + " text, " +
-            COLUMN_MEANTYPENAME + " text, " +
-            COLUMN_CARDHOLDER + " text, " +
-            COLUMN_CARDEXPIRATIONDATE + " text, " +
-            COLUMN_USER_SIGNATURE_REQUIREMENT + " integer not null, " +
-            COLUMN_USER_SIGNATURE + " blob " +
-            ");";
+                    BaseColumns._ID + " integer primary key autoincrement, " +
+                    COLUMN_ORDER_DATE_DEVICE_MILLIS + " integer not null, " +
+                    COLUMN_ORDER_MID + " text not null, " +
+                    COLUMN_ORDER_DATE_UTC + " text not null, " +
+                    COLUMN_ORDER_DATE_DEVICE + " text not null, " +
+                    COLUMN_ORDER_NUMBER + " text not null, " +
+                    COLUMN_ORDER_COMMENT + " text, " +
+                    COLUMN_ORDER_AMOUNT + " numeric not null, " +
+                    COLUMN_ORDER_CURRENCY + " text not null, " +
+                    COLUMN_ORDER_ITEMS_JSON + " text, " +
+                    COLUMN_PAYMENT_METHOD + " text not null, " +
+                    COLUMN_ORDER_STATE + " text not null, " +
+                    COLUMN_ORDER_APPROVAL_CODE + " text, " +
+                    COLUMN_ORDER_EXTRA_INFO + " text, " +
+                    COLUMN_BILL_NUMBER + " text, " +
+                    COLUMN_MEANNUMBER + " text, " +
+                    COLUMN_MEANTYPENAME + " text, " +
+                    COLUMN_CARDHOLDER + " text, " +
+                    COLUMN_CARDEXPIRATIONDATE + " text, " +
+                    COLUMN_USER_SIGNATURE_REQUIREMENT + " integer not null, " +
+                    COLUMN_USER_SIGNATURE + " blob " +
+                    ");";
 
     private static final String DB_DROP_TABLE = "drop table if exists " + DB_TABLE_TRANSACTIONS + ";";
-	
-	public AssistTransactionStorageImpl(Context ctx, String dbNameSuffix) {
-		mCtx = ctx;
+
+    public AssistTransactionStorageImpl(Context ctx, String dbNameSuffix) {
+        mCtx = ctx;
         if (!TextUtils.isEmpty(dbNameSuffix)) {
             dbName = DB_NAME + "." + dbNameSuffix;
         }
-		transactionFilter = new AssistTransactionFilter();
-	}
+        transactionFilter = new AssistTransactionFilter();
+    }
 
     @Override
-	public long add(AssistTransaction t) {
+    public long add(AssistTransaction t) {
 
         /* Order date UTC */
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
@@ -103,19 +103,19 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
         sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.US);
         t.setOrderDateDevice(sdf.format(now.getTime()));
 
-		DBHelper dbHelper = new DBHelper(mCtx, dbName, null, DB_VERSION);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_ORDER_DATE_DEVICE_MILLIS, now.getTimeInMillis());
+        DBHelper dbHelper = new DBHelper(mCtx, dbName, null, DB_VERSION);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_ORDER_DATE_DEVICE_MILLIS, now.getTimeInMillis());
         cv.put(COLUMN_ORDER_MID, t.getMerchantID());
-		cv.put(COLUMN_ORDER_DATE_UTC, t.getOrderDateUTC());
+        cv.put(COLUMN_ORDER_DATE_UTC, t.getOrderDateUTC());
         cv.put(COLUMN_ORDER_DATE_DEVICE, t.getOrderDateDevice());
 
-		cv.put(COLUMN_ORDER_NUMBER, t.getOrderNumber());
-		cv.put(COLUMN_ORDER_COMMENT, t.getOrderComment());
-		cv.put(COLUMN_ORDER_AMOUNT, t.getOrderAmount());
-		cv.put(COLUMN_ORDER_CURRENCY, t.getOrderCurrency().toString());
+        cv.put(COLUMN_ORDER_NUMBER, t.getOrderNumber());
+        cv.put(COLUMN_ORDER_COMMENT, t.getOrderComment());
+        cv.put(COLUMN_ORDER_AMOUNT, t.getOrderAmount());
+        cv.put(COLUMN_ORDER_CURRENCY, t.getOrderCurrency().toString());
         if (t.hasOrderItems()) {
             try {
                 cv.put(COLUMN_ORDER_ITEMS_JSON, AssistOrderUtils.toJsonString(t.getOrderItems()));
@@ -123,7 +123,7 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
                 e.printStackTrace();
             }
         }
-		cv.put(COLUMN_PAYMENT_METHOD, t.getPaymentMethod().toString());
+        cv.put(COLUMN_PAYMENT_METHOD, t.getPaymentMethod().toString());
         cv.put(COLUMN_USER_SIGNATURE, t.getUserSignature());
 
         cv.put(COLUMN_ORDER_STATE, t.getResult().getOrderState().toString());
@@ -135,14 +135,14 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
         cv.put(COLUMN_CARDEXPIRATIONDATE, t.getResult().getCardExpirationDate());
         cv.put(COLUMN_MEANNUMBER, t.getResult().getMeanNumber());
         cv.put(COLUMN_MEANTYPENAME, t.getResult().getMeantypeName());
-		
-		long id = db.insert(DB_TABLE_TRANSACTIONS, null, cv);
-		dbHelper.close();
+
+        long id = db.insert(DB_TABLE_TRANSACTIONS, null, cv);
+        dbHelper.close();
         if (id != ERROR) {
             t.setId(id);
         }
-		return id;
-	}
+        return id;
+    }
 
     @Override
     public AssistTransaction getTransaction(long id) {
@@ -162,11 +162,11 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
     }
 
     @Override
-	public void updateTransactionSignature(long id, byte[] signature) {
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_USER_SIGNATURE, signature);
-		updateTransactionsTable(id, cv);
-	}
+    public void updateTransactionSignature(long id, byte[] signature) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_USER_SIGNATURE, signature);
+        updateTransactionsTable(id, cv);
+    }
 
     @Override
     public void updateTransactionOrderNumber(long id, String on) {
@@ -262,7 +262,7 @@ public class AssistTransactionStorageImpl implements AssistTransactionStorage {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String sel = BaseColumns._ID + " = ?";
-        String[] whereArgs = new String[] {String.valueOf(id)};
+        String[] whereArgs = new String[]{String.valueOf(id)};
         int res = db.delete(DB_TABLE_TRANSACTIONS, sel, whereArgs);
         db.close();
         dbHelper.close();

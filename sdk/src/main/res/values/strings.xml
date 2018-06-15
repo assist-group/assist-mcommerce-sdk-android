@@ -2,24 +2,24 @@
 
     <string name="app_name">Assist SDK</string>
 
-	<string name="sdk_version">?android:attr/versionName</string>
+    <string name="sdk_version">?android:attr/versionName</string>
 
-	<string name="connection_check">Проверка соединения&#8230;</string>
-	<string name="connection_error">Не удалось подключиться к серверу</string>
+    <string name="connection_check">Проверка соединения&#8230;</string>
+    <string name="connection_error">Не удалось подключиться к серверу</string>
 
     <string name="scan_card">Сканирование карты</string>
 
-	<string name="registration_error">Ошибка регистрации приложения</string>
-	<string name="response_checking_error">Ошибка обработки результата</string>
+    <string name="registration_error">Ошибка регистрации приложения</string>
+    <string name="response_checking_error">Ошибка обработки результата</string>
 
-	<string name="dlg_title_warning">Внимание</string>
-	<string name="dlg_msg_stop_payment_question">Остановить платеж?</string>
+    <string name="dlg_title_warning">Внимание</string>
+    <string name="dlg_msg_stop_payment_question">Остановить платеж?</string>
 
     <string name="emty_device_list_text">No bluetooth paired devices</string>
 
-	<string name="menu_item_bt_pref">BT настройки</string>
-	<string name="menu_item_reset_filter">Сбросить</string>
+    <string name="menu_item_bt_pref">BT настройки</string>
+    <string name="menu_item_reset_filter">Сбросить</string>
 
-	<string name="public_key">BC6b+gSgJxhlpAMUogrq9i8jnrAAdGgocpqiOqIDsfeMlD7RZUc3uJ/1Q8F4jcOL9+yziLDlq78HQmb43s41M/g=</string>
+    <string name="public_key">BC6b+gSgJxhlpAMUogrq9i8jnrAAdGgocpqiOqIDsfeMlD7RZUc3uJ/1Q8F4jcOL9+yziLDlq78HQmb43s41M/g=</string>
 
 </resources>

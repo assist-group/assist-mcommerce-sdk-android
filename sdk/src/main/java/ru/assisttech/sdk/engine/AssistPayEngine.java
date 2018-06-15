@@ -40,23 +40,23 @@ import static ru.assisttech.sdk.storage.AssistTransaction.PaymentMethod.CARD_TER
  * Initiates payment process, checks connection and registration
  */
 public class AssistPayEngine {
-						
-	private static final String TAG = "AssistPayEngine";
+
+    private static final String TAG = "AssistPayEngine";
 
     private String ServerUrl = AssistAddress.DEFAULT_SERVER;
 
-	private Context appContext;
-	private Activity callerActivity;
+    private Context appContext;
+    private Activity callerActivity;
 
-	private InstallationInfo instInfo;
-	private AssistNetworkEngine netEngine;
+    private InstallationInfo instInfo;
+    private AssistNetworkEngine netEngine;
 
     protected AssistBaseProcessor processor;
-	private AssistTransactionStorage storage;
+    private AssistTransactionStorage storage;
 
-	private PayEngineListener engineListener;
-	
-	private ProgressDialog pd;
+    private PayEngineListener engineListener;
+
+    private ProgressDialog pd;
     private boolean connectionChecked;
     private boolean finished;
     private String deviceUniqueId;
@@ -80,14 +80,14 @@ public class AssistPayEngine {
         deviceUniqueId = sysInfo.uniqueId();
     }
 
-    private AssistProcessorEnvironment buildServiceEnvironment(AssistPaymentData data) {
+    public AssistProcessorEnvironment buildServiceEnvironment(AssistPaymentData data) {
         AssistMerchant m = new AssistMerchant(data.getMerchantID(), data.getLogin(), data.getPassword());
         return new AssistProcessorEnvironment(this, m, data);
     }
 
-	public void setEngineListener(PayEngineListener listener) {
-		engineListener = listener;
-	}
+    public void setEngineListener(PayEngineListener listener) {
+        engineListener = listener;
+    }
 
     public PayEngineListener getEngineListener() {
         return engineListener;
@@ -95,6 +95,10 @@ public class AssistPayEngine {
 
     public void addNetworkCertificate(Certificate cert) {
         netEngine.addCertificate(cert);
+    }
+
+    public AssistNetworkEngine getNetEngine() {
+        return netEngine;
     }
 
     public void setServerURL(String url) {
@@ -135,15 +139,14 @@ public class AssistPayEngine {
             saveCallerActivity(caller);
             setFinished(false);
 
-            AssistMerchant m = environment.getMerchant();
             AssistPaymentData data = environment.getData();
             data.setMobileDevice("5");  // Tells Assist server what web pages to show
 
             AssistTransaction t = createTransaction(
-                        m.getID(),
-                        data,
-                        useCamera ? AssistTransaction.PaymentMethod.CARD_PHOTO_SCAN :
-                                    AssistTransaction.PaymentMethod.CARD_MANUAL
+                    data.getMerchantID(),
+                    data,
+                    useCamera ? AssistTransaction.PaymentMethod.CARD_PHOTO_SCAN :
+                            AssistTransaction.PaymentMethod.CARD_MANUAL
             );
 
             processor = new AssistWebProcessor(getContext(), environment, useCamera);
@@ -169,19 +172,13 @@ public class AssistPayEngine {
             saveCallerActivity(caller);
             setFinished(false);
 
-            AssistMerchant m = environment.getMerchant();
             AssistPaymentData data = environment.getData();
 
-            AssistTransaction t = new AssistTransaction();
-            t.setMerchantID(m.getID());
-            t.setOrderAmount(data.getFields().get(FieldName.OrderAmount));
-            t.setOrderComment(data.getFields().get(FieldName.OrderComment));
-            t.setOrderCurrency(AssistPaymentData.Currency.valueOf(data.getFields().get(FieldName.OrderCurrency)));
-            t.setOrderNumber(data.getFields().get(FieldName.OrderNumber));
-            if (data.getOrderItems() != null) {
-                t.setOrderItems(data.getOrderItems());
-            }
-            t.setPaymentMethod(CARD_TERMINAL);
+            AssistTransaction t = createTransaction(
+                    data.getMerchantID(),
+                    data,
+                    CARD_TERMINAL
+            );
 
             processor = new AssistTokenPayProcessor(getContext(), environment, type);
             processor.setNetEngine(netEngine);
@@ -202,19 +199,13 @@ public class AssistPayEngine {
             saveCallerActivity(caller);
             setFinished(false);
 
-            AssistMerchant m = environment.getMerchant();
             AssistPaymentData data = environment.getData();
 
-            AssistTransaction t = new AssistTransaction();
-            t.setMerchantID(m.getID());
-            t.setOrderAmount(data.getFields().get(FieldName.OrderAmount));
-            t.setOrderComment(data.getFields().get(FieldName.OrderComment));
-            t.setOrderCurrency(AssistPaymentData.Currency.valueOf(data.getFields().get(FieldName.OrderCurrency)));
-            t.setOrderNumber(data.getFields().get(FieldName.OrderNumber));
-            if (data.getOrderItems() != null) {
-                t.setOrderItems(data.getOrderItems());
-            }
-            t.setPaymentMethod(CARD_TERMINAL);
+            AssistTransaction t = createTransaction(
+                    data.getMerchantID(),
+                    data,
+                    CARD_TERMINAL
+            );
 
             processor = new AssistRecurrentPayProcessor(getContext(), environment);
             processor.setNetEngine(netEngine);
@@ -248,16 +239,17 @@ public class AssistPayEngine {
 
     /**
      * Gets result for certain payment
+     *
      * @param id transaction ID {@link AssistTransaction#getId()}
      */
-	public void getOrderResult(Activity caller, long id) {
+    public void getOrderResult(Activity caller, long id) {
         if (isEngineReady()) {
             saveCallerActivity(caller);
             setFinished(false);
             processor = initResultProcessor(id);
             checkRegistration();
         }
-	}
+    }
 
     public void stopPayment(Activity caller) {
         setFinished(true);
@@ -321,7 +313,10 @@ public class AssistPayEngine {
         Log.d(TAG, "Check URL: " + ServerUrl);
         try {
             URL u = new URL(ServerUrl + AssistAddress.WEB_SERVICE);
-            showProgressDialog(getCallerActivity(), R.string.connection_check);
+            Activity callerActivity = getCallerActivity();
+            if (callerActivity != null) {
+                showProgressDialog(callerActivity, R.string.connection_check);
+            }
             netEngine.checkHTTPSConnection(u, new ConnectionCheckListener());
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -329,7 +324,7 @@ public class AssistPayEngine {
     }
 
 
-	private AssistTransaction createTransaction(String merchantID, AssistPaymentData data, AssistTransaction.PaymentMethod method) {
+    public AssistTransaction createTransaction(String merchantID, AssistPaymentData data, AssistTransaction.PaymentMethod method) {
         AssistTransaction t = new AssistTransaction();
         t.setMerchantID(merchantID);
         t.setOrderAmount(data.getFields().get(FieldName.OrderAmount));
@@ -346,11 +341,11 @@ public class AssistPayEngine {
             t.setRequireUserSignature(AssistPaymentData.PaymentMode.POSKeyEntry.equals(mode));
         }
         return t;
-	}
+    }
 
     private void startProcessor() {
-		processor.start(getCallerActivity());
-	}
+        processor.start(getCallerActivity());
+    }
 
     /**
      * Transaction saving and payment beginning
@@ -366,6 +361,7 @@ public class AssistPayEngine {
     /**
      * Internal method to get payment result after payment process completion.
      * Does not check application registration
+     *
      * @param id transaction id {@link AssistTransaction#getId()}
      */
     private void getResult(long id) {
@@ -383,7 +379,7 @@ public class AssistPayEngine {
      * @param id transaction id {@link AssistTransaction#getId()}
      * @return {@link AssistResultProcessor}
      */
-    private  AssistResultProcessor initResultProcessor(long id) {
+    private AssistResultProcessor initResultProcessor(long id) {
         AssistResultProcessor rp = getResultProcessor();
         rp.setNetEngine(netEngine);
         rp.setURL(getGetOrderStatusUrl());
@@ -394,6 +390,7 @@ public class AssistPayEngine {
 
     /**
      * Obtain transaction form DB
+     *
      * @param id transaction id {@link AssistTransaction#getId()}
      */
     protected AssistTransaction getTransaction(long id) {
@@ -402,20 +399,21 @@ public class AssistPayEngine {
 
     /**
      * Update transaction in DB with new {@link AssistResult}
-     * @param id ID of transaction to cancel {@link AssistTransaction#getId()}
+     *
+     * @param id     ID of transaction to cancel {@link AssistTransaction#getId()}
      * @param result result of transaction {@link AssistResult}
      */
-	private void updateTransaction(long id, AssistResult result) {
-		storage.updateTransactionResult(id, result);
-	}
+    private void updateTransaction(long id, AssistResult result) {
+        storage.updateTransactionResult(id, result);
+    }
 
 
     private void engineInitializationFailed(String info) {
-		processor = null;
+        processor = null;
         if (!isFinished()) {
             getEngineListener().onFailure(getCallerActivity(), info);
         }
-	}
+    }
 
     protected Context getContext() {
         return appContext;
@@ -469,22 +467,22 @@ public class AssistPayEngine {
         this.finished = value;
     }
 
-    private  void showProgressDialog(Activity activity, int messageResId) {
-		if (pd != null) {
-			return;
-		}
-		pd = new ProgressDialog(activity);
-		pd.setCanceledOnTouchOutside(false);
+    private void showProgressDialog(Activity activity, int messageResId) {
+        if (pd != null) {
+            return;
+        }
+        pd = new ProgressDialog(activity);
+        pd.setCanceledOnTouchOutside(false);
         pd.setMessage(appContext.getString(messageResId));
-		pd.show();
-	}
+        pd.show();
+    }
 
-    private  void closeProgressDialog() {
-		if (pd != null) {
-			pd.dismiss();
-			pd = null;
-		}
-	}
+    private void closeProgressDialog() {
+        if (pd != null) {
+            pd.dismiss();
+            pd = null;
+        }
+    }
 
     public AssistWebProcessor getWebProcessor() {
         return (AssistWebProcessor) processor;
@@ -493,7 +491,7 @@ public class AssistPayEngine {
     /**
      * Connection check result processing
      */
-    private  class ConnectionCheckListener implements AssistNetworkEngine.ConnectionCheckListener {
+    private class ConnectionCheckListener implements AssistNetworkEngine.ConnectionCheckListener {
 
         @Override
         public void onConnectionSuccess() {
@@ -515,7 +513,7 @@ public class AssistPayEngine {
     /**
      * Слушатель результата регистрации приложения {@link AssistRegistrationProvider}
      */
-    private  class RegistrationResultListener implements AssistRegistrationProvider.RegistrationResultListener {
+    private class RegistrationResultListener implements AssistRegistrationProvider.RegistrationResultListener {
 
         @Override
         public void onRegistrationOk(String registrationID) {
@@ -635,10 +633,11 @@ public class AssistPayEngine {
             getEngineListener().onFailure(getCallerActivity(), message);
         }
     }
+
     /**
      * Слушатель результата вызова сервиса оплаты заказа с токеном {@link AssistRecurrentPayProcessor}
      */
-    private class RecurrentPayProcessorListener extends BaseProcessorListener {
+    public class RecurrentPayProcessorListener extends BaseProcessorListener {
         @Override
         public void onFinished(long id, AssistResult result) {
             Log.d(TAG, "RecurrentPayProcessorListener.onFinished() " + result.getOrderState());

@@ -14,7 +14,7 @@ public class AssistOrderUtils {
     public static ArrayList<AssistOrderItem> fromJsonString(String jsonString) throws Exception {
         JSONArray jsonItems = new JSONArray(jsonString);
         ArrayList<AssistOrderItem> items = new ArrayList<>();
-        for(int i = 0; i < jsonItems.length(); i++) {
+        for (int i = 0; i < jsonItems.length(); i++) {
             JSONObject jsonItem = jsonItems.getJSONObject(i);
             String name = jsonItem.getString(ORDER_ITEM_NAME);
             String unitPrice = jsonItem.getString(ORDER_ITEM_UNIT_PRICE);

@@ -8,9 +8,9 @@ import java.util.Set;
 
 /**
  * HTTP request parameters include:
- *   - request method GET or POST
- *   - HTTP header fields (added with addProperty() method)
- *   - request data (payload)
+ * - request method GET or POST
+ * - HTTP header fields (added with addProperty() method)
+ * - request data (payload)
  */
 class HttpRequest {
 
@@ -58,12 +58,12 @@ class HttpRequest {
         builder.append("Request headers:\n");
         if (properties != null && !properties.isEmpty()) {
             Set<Map.Entry<String, String>> entrySet = properties.entrySet();
-            for (Map.Entry<String, String> entry: entrySet) {
+            for (Map.Entry<String, String> entry : entrySet) {
                 builder.append("    ")
-                       .append(entry.getKey())
-                       .append(" : ")
-                       .append(entry.getValue())
-                       .append("\n");
+                        .append(entry.getKey())
+                        .append(" : ")
+                        .append(entry.getValue())
+                        .append("\n");
             }
         } else {
             builder.append("    no headers\n");

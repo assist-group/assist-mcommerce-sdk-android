@@ -14,11 +14,12 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.assisttech.sdk.AssistMerchant;
 import ru.assisttech.sdk.AssistPaymentData;
 import ru.assisttech.sdk.AssistResult;
+import ru.assisttech.sdk.AssistSDK;
 import ru.assisttech.sdk.FieldName;
 import ru.assisttech.sdk.FormatType;
+import ru.assisttech.sdk.identification.InstallationInfo;
 import ru.assisttech.sdk.network.AssistNetworkEngine;
 import ru.assisttech.sdk.network.HttpResponse;
 
@@ -32,9 +33,9 @@ public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
-            /*
-             * Manual card data input
-             */
+        /*
+         * Manual card data input
+         */
         getNetEngine().postRequest(getURL(),
                 new NetworkConnectionErrorListener(),
                 new RecurrentPayResponseParser(),
@@ -53,60 +54,63 @@ public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
     String buildRequest() {
 
         AssistPaymentData data = getEnvironment().getData();
-        AssistMerchant m = getEnvironment().getMerchant();
+        InstallationInfo info = getEnvironment().getPayEngine().getInstInfo();
 
         StringBuilder content = new StringBuilder();
         try {
             Map<String, String> params = data.getFields();
 
             content.append(URLEncoder.encode(FieldName.Merchant_ID, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getID(), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(data.getMerchantID(), "UTF-8")).append("&");
 
             content.append(URLEncoder.encode(FieldName.Login, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getLogin(), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(data.getLogin(), "UTF-8")).append("&");
 
             content.append(URLEncoder.encode(FieldName.Password, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getPassword(), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.BillNumber, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.PaymentToken), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.Amount, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.Currency, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(data.getPassword(), "UTF-8")).append("&");
 
             content.append(URLEncoder.encode(FieldName.OrderNumber, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderNumber), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.OrderAmount, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.OrderCurrency, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
 
             if (params.get(FieldName.OrderComment) != null) {
                 content.append(URLEncoder.encode(FieldName.OrderComment, "UTF-8")).append("=");
                 content.append(URLEncoder.encode(params.get(FieldName.OrderComment), "UTF-8")).append("&");
             }
 
-            content.append(URLEncoder.encode(FieldName.Lastname, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Lastname), "UTF-8")).append("&");
+            //region v 1.4.2
+            content.append(URLEncoder.encode(FieldName.BillNumber, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.BillNumber), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode(FieldName.Firstname, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Firstname), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Amount, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.Amount), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode(FieldName.Email, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Email), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Currency, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.Currency), "UTF-8")).append("&");
+            //endregion
 
-            /**
-             * Response format
-             * 1 - CSV;
-             * 2 - WDDX;
-             * 3 - XML;
-             * 4 - SOAP;
-             */
+            //region v 1.5.0
+            content.append(URLEncoder.encode(FieldName.OrderAmount, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.OrderCurrency, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
+            //endregion
+
+            content.append(URLEncoder.encode(FieldName.Device, "UTF-8")).append("=");
+            content.append(URLEncoder.encode("CommerceSDK", "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.DeviceUniqueID, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(info.getDeiceUniqueId(), "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.ApplicationName, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(info.appName(), "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.ApplicationVersion, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(info.versionName(), "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.SDKVersion, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(AssistSDK.getSdkVersion(), "UTF-8")).append("&");
+
             content.append(URLEncoder.encode(FieldName.Format, "UTF-8")).append("=");
             content.append(URLEncoder.encode(FormatType.SOAP.getId(), "UTF-8")).append("&");
 
@@ -207,7 +211,7 @@ public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
         public void syncPostProcessing() {
             Log.d(TAG, "syncPostProcessing()");
 
-            long tID = getTransaction().getId();
+            long tID = getTransaction() != null ? getTransaction().getId() : -1L;
             if (isError) {
                 if (hasListener()) {
                     getListener().onError(tID, errorMessage);
@@ -215,7 +219,7 @@ public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
             } else {
                 AssistResult result = new AssistResult();
                 if (!responseFields.get(testField).isEmpty()) {
-				    /* Success */
+                    /* Success */
                     result.setApprovalCode(responseFields.get("approvalcode"));
                     result.setBillNumber(responseFields.get("billnumber"));
                     result.setExtra(responseFields.get("responsecode") + " " + responseFields.get("customermessage"));
@@ -230,7 +234,7 @@ public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
                         result.setOrderState(AssistResult.OrderState.DECLINED);
                     }
                 } else {
-				    /* Fault */
+                    /* Fault */
                     result.setExtra(responseFields.get("faultcode") + ": " + responseFields.get("faultstring"));
                 }
                 if (hasListener()) {

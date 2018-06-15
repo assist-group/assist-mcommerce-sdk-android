@@ -32,9 +32,9 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
-            /*
-             * Manual card data input
-             */
+        /*
+         * Manual card data input
+         */
         getNetEngine().postRequest(getURL(),
                 new NetworkConnectionErrorListener(),
                 new SilentpayResponseParser(),
@@ -221,7 +221,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
             } else {
                 AssistResult result = new AssistResult();
                 if (!responseFields.get(testField).isEmpty()) {
-				    /* Success */
+                    /* Success */
                     result.setApprovalCode(responseFields.get("approvalcode"));
                     result.setBillNumber(responseFields.get("billnumber"));
                     result.setExtra(responseFields.get("responsecode") + " " + responseFields.get("customermessage"));
@@ -236,7 +236,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
                         result.setOrderState(AssistResult.OrderState.DECLINED);
                     }
                 } else {
-				    /* Fault */
+                    /* Fault */
                     result.setExtra(responseFields.get("faultcode") + ": " + responseFields.get("faultstring"));
                 }
                 if (hasListener()) {

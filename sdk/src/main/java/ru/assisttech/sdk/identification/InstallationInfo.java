@@ -2,21 +2,15 @@ package ru.assisttech.sdk.identification;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 public class InstallationInfo {
-	
-	private static final String INSTALLATION = ".mobilepayinstallation";
-	private static final String APP_REG_ID = "ApplicationRegId";
+
+    private static final String INSTALLATION = ".mobilepayinstallation";
+    private static final String APP_REG_ID = "ApplicationRegId";
 
     private static InstallationInfo instance;
     private Context context;
@@ -24,14 +18,14 @@ public class InstallationInfo {
     private String appName;
     private String versionName;
 
-    public static InstallationInfo getInstance(Context context){
-        if(instance == null)
+    public static InstallationInfo getInstance(Context context) {
+        if (instance == null)
             instance = new InstallationInfo(context);
         return instance;
     }
-    
+
     private InstallationInfo(Context context) {
-    	this.context = context;
+        this.context = context;
         getNames(context);
         // Restore preferences
         String name = context.getApplicationInfo().packageName + INSTALLATION;
@@ -57,11 +51,11 @@ public class InstallationInfo {
         editor.commit();
     }
 
-    public String appName(){
+    public String appName() {
         return appName;
     }
 
-    public String versionName(){
+    public String versionName() {
         return versionName;
     }
 

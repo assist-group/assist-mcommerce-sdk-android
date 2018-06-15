@@ -40,13 +40,13 @@ public class AssistCard implements Parcelable {
     }
 
     public void setExpireMonth(String month) {
-        if((month != null) && (month.length() == 1))
+        if ((month != null) && (month.length() == 1))
             expireMonth = "0" + month;
         else
             expireMonth = month;
     }
 
-    public void setExpireMonth(int month){
+    public void setExpireMonth(int month) {
         setExpireMonth(String.valueOf(month));
     }
 
@@ -57,14 +57,14 @@ public class AssistCard implements Parcelable {
     public void setExpireYear(String expireYear) {
         if (expireYear.length() == 2) {
             Calendar calendar = Calendar.getInstance();
-            int year = (calendar.get(Calendar.YEAR)/100)*100 + Integer.valueOf(expireYear);
+            int year = (calendar.get(Calendar.YEAR) / 100) * 100 + Integer.valueOf(expireYear);
             this.expireYear = String.valueOf(year);
         } else {
             this.expireYear = expireYear;
         }
     }
 
-    public void setExpireYear(int year){
+    public void setExpireYear(int year) {
         setExpireYear(String.valueOf(year));
     }
 
@@ -79,6 +79,7 @@ public class AssistCard implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         write(dest);
     }
+
     // Parcelable
     public static final Parcelable.Creator<AssistCard> CREATOR = new Parcelable.Creator<AssistCard>() {
         public AssistCard createFromParcel(Parcel in) {
