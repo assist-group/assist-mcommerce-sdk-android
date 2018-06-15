@@ -144,7 +144,10 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
 
     @Override
 	public void onBackPressed() {
-        showAlert();
+	    if(webView != null && webView.canGoBack())
+	        webView.goBack();
+	    else
+            showAlert();
 	}
 
     @Override
