@@ -157,10 +157,10 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 
     		Map<String, String> params = data.getFields();
 
-			content.append(URLEncoder.encode("Merchant_ID", "UTF-8")).append("=");
+			content.append(URLEncoder.encode(FieldName.Merchant_ID, "UTF-8")).append("=");
 			content.append(URLEncoder.encode(m.getID(), "UTF-8")).append("&");
 
-			sp.check4Signature("Merchant_ID", m.getID());
+			sp.check4Signature(FieldName.Merchant_ID, m.getID());
 
             Log.d(TAG, "Request parameters:");
         	for (Entry<String, String> item: params.entrySet()) {
@@ -218,12 +218,6 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 	 */
 	private class SignatureProcessor {
 
-		private static final String MERCHANT_ID = "Merchant_ID";
-		private static final String ORDER_NUMBER = "OrderNumber";
-		private static final String ORDER_AMOUNT = "OrderAmount";
-		private static final String ORDER_CURRENCY = "OrderCurrency";
-		private static final String CUSTOMER_NUMBER = "CustomerNumber";
-
 		private String Merchant_ID;
 		private String OrderNumber;
 		private String OrderAmount;
@@ -232,19 +226,19 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 
 		void check4Signature(String fieldName, String value) {
 			switch (fieldName) {
-				case MERCHANT_ID:
+				case FieldName.Merchant_ID:
 					Merchant_ID = value;
 					break;
-				case ORDER_NUMBER:
+				case FieldName.OrderNumber:
 					OrderNumber = value;
 					break;
-				case ORDER_AMOUNT:
+				case FieldName.OrderAmount:
 					OrderAmount = value;
 					break;
-				case ORDER_CURRENCY:
+				case FieldName.OrderCurrency:
 					OrderCurrency = value;
 					break;
-				case CUSTOMER_NUMBER:
+				case FieldName.CustomerNumber:
 					CustomerNumber = value;
 					break;
 			}
@@ -336,11 +330,8 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 
 	/**
 	 * Класс парсинга HTML страницы на предмет наличия поля для ввода номера карты
-	 * {@link CardPageScanner#CARD_NUMBER}
 	 */
 	private class CardPageScanner implements NetworkResponseProcessor {
-
-		static final String CARD_NUMBER = "CardNumber";
 
 		private boolean isDetected;
 
@@ -354,7 +345,7 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 			try {
 				// Parse and check HTML page
 				Document doc = Jsoup.parse(response.getData());
-				Element cn = doc.getElementById(CARD_NUMBER);
+				Element cn = doc.getElementById(FieldName.CardNumber);
 				if (cn != null) {
 					isDetected = true;
 				}
