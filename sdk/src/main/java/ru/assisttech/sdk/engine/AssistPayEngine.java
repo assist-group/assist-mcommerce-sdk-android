@@ -80,7 +80,7 @@ public class AssistPayEngine {
         deviceUniqueId = sysInfo.uniqueId();
     }
 
-    private AssistProcessorEnvironment buildServiceEnvironment(AssistPaymentData data) {
+    public AssistProcessorEnvironment buildServiceEnvironment(AssistPaymentData data) {
         AssistMerchant m = new AssistMerchant(data.getMerchantID(), data.getLogin(), data.getPassword());
         return new AssistProcessorEnvironment(this, m, data);
     }
@@ -135,12 +135,11 @@ public class AssistPayEngine {
             saveCallerActivity(caller);
             setFinished(false);
 
-            AssistMerchant m = environment.getMerchant();
             AssistPaymentData data = environment.getData();
             data.setMobileDevice("5");  // Tells Assist server what web pages to show
 
             AssistTransaction t = createTransaction(
-                        m.getID(),
+                        data.getMerchantID(),
                         data,
                         useCamera ? AssistTransaction.PaymentMethod.CARD_PHOTO_SCAN :
                                     AssistTransaction.PaymentMethod.CARD_MANUAL
@@ -169,11 +168,10 @@ public class AssistPayEngine {
             saveCallerActivity(caller);
             setFinished(false);
 
-            AssistMerchant m = environment.getMerchant();
             AssistPaymentData data = environment.getData();
 
             AssistTransaction t = createTransaction(
-                    m.getID(),
+                    data.getMerchantID(),
                     data,
                     CARD_TERMINAL
             );
@@ -197,11 +195,10 @@ public class AssistPayEngine {
             saveCallerActivity(caller);
             setFinished(false);
 
-            AssistMerchant m = environment.getMerchant();
             AssistPaymentData data = environment.getData();
 
             AssistTransaction t = createTransaction(
-                    m.getID(),
+                    data.getMerchantID(),
                     data,
                     CARD_TERMINAL
             );
@@ -319,7 +316,7 @@ public class AssistPayEngine {
     }
 
 
-	private AssistTransaction createTransaction(String merchantID, AssistPaymentData data, AssistTransaction.PaymentMethod method) {
+	public AssistTransaction createTransaction(String merchantID, AssistPaymentData data, AssistTransaction.PaymentMethod method) {
         AssistTransaction t = new AssistTransaction();
         t.setMerchantID(merchantID);
         t.setOrderAmount(data.getFields().get(FieldName.OrderAmount));
