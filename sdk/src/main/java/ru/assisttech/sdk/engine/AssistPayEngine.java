@@ -172,16 +172,11 @@ public class AssistPayEngine {
             AssistMerchant m = environment.getMerchant();
             AssistPaymentData data = environment.getData();
 
-            AssistTransaction t = new AssistTransaction();
-            t.setMerchantID(m.getID());
-            t.setOrderAmount(data.getFields().get(FieldName.OrderAmount));
-            t.setOrderComment(data.getFields().get(FieldName.OrderComment));
-            t.setOrderCurrency(AssistPaymentData.Currency.valueOf(data.getFields().get(FieldName.OrderCurrency)));
-            t.setOrderNumber(data.getFields().get(FieldName.OrderNumber));
-            if (data.getOrderItems() != null) {
-                t.setOrderItems(data.getOrderItems());
-            }
-            t.setPaymentMethod(CARD_TERMINAL);
+            AssistTransaction t = createTransaction(
+                    m.getID(),
+                    data,
+                    CARD_TERMINAL
+            );
 
             processor = new AssistTokenPayProcessor(getContext(), environment, type);
             processor.setNetEngine(netEngine);
@@ -205,16 +200,11 @@ public class AssistPayEngine {
             AssistMerchant m = environment.getMerchant();
             AssistPaymentData data = environment.getData();
 
-            AssistTransaction t = new AssistTransaction();
-            t.setMerchantID(m.getID());
-            t.setOrderAmount(data.getFields().get(FieldName.OrderAmount));
-            t.setOrderComment(data.getFields().get(FieldName.OrderComment));
-            t.setOrderCurrency(AssistPaymentData.Currency.valueOf(data.getFields().get(FieldName.OrderCurrency)));
-            t.setOrderNumber(data.getFields().get(FieldName.OrderNumber));
-            if (data.getOrderItems() != null) {
-                t.setOrderItems(data.getOrderItems());
-            }
-            t.setPaymentMethod(CARD_TERMINAL);
+            AssistTransaction t = createTransaction(
+                    m.getID(),
+                    data,
+                    CARD_TERMINAL
+            );
 
             processor = new AssistRecurrentPayProcessor(getContext(), environment);
             processor.setNetEngine(netEngine);
