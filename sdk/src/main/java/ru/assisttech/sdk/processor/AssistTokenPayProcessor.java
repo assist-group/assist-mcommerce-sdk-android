@@ -205,7 +205,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
             } else {
                 AssistResult result = new AssistResult();
                 if (!responseFields.get(testField).isEmpty()) {
-				    /* Success */
+                    /* Success */
                     result.setApprovalCode(responseFields.get("approvalcode"));
                     result.setBillNumber(responseFields.get("billnumber"));
                     result.setExtra(responseFields.get("responsecode") + " " + responseFields.get("customermessage"));
@@ -220,7 +220,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
                         result.setOrderState(AssistResult.OrderState.DECLINED);
                     }
                 } else {
-				    /* Fault */
+                    /* Fault */
                     result.setExtra(responseFields.get("faultcode") + ": " + responseFields.get("faultstring"));
                 }
                 if (hasListener()) {

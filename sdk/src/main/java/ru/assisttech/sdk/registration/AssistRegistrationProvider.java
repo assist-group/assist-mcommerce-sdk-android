@@ -26,13 +26,14 @@ public class AssistRegistrationProvider {
     private URL url;
     private AssistNetworkEngine ne;
 
-	public interface RegistrationResultListener {		
-		void onRegistrationOk(String registrationID);
-		void onRegistrationError(String faultCode, String faultString);
-	}
-		
-	public AssistRegistrationProvider(Context context) {
-	}
+    public interface RegistrationResultListener {
+        void onRegistrationOk(String registrationID);
+
+        void onRegistrationError(String faultCode, String faultString);
+    }
+
+    public AssistRegistrationProvider(Context context) {
+    }
 
     public void setNetworkEngine(AssistNetworkEngine engine) {
         this.ne = engine;
@@ -90,11 +91,11 @@ public class AssistRegistrationProvider {
                     } else if (eventType == XmlPullParser.END_TAG) {
                         currentTag = "";
                     } else if (eventType == XmlPullParser.TEXT) {
-                        if(currentTag.equals(REGISTRATION_ID)) {
+                        if (currentTag.equals(REGISTRATION_ID)) {
                             id = parser.getText();
-                        } else if(currentTag.equals(FAULT_CODE)) {
+                        } else if (currentTag.equals(FAULT_CODE)) {
                             faultcode = parser.getText();
-                        } else if(currentTag.equals(FAULT_STRING)) {
+                        } else if (currentTag.equals(FAULT_STRING)) {
                             faultstring = parser.getText();
                         }
                     }

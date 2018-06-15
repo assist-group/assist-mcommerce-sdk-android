@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import ru.assisttech.sdk.AssistResult;
-import ru.assisttech.sdk.identification.SystemInfo;
 import ru.assisttech.sdk.network.AssistNetworkEngine;
 import ru.assisttech.sdk.network.HttpResponse;
 import ru.assisttech.sdk.storage.AssistTransaction;
@@ -57,16 +56,16 @@ public class AssistResultProcessor extends AssistBaseProcessor {
         return "<soapenv:Envelope " +
                 "xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
                 "xmlns:ws=\"http://www.paysecure.ru/ws/\">" +
-                    "<soapenv:Header/>" +
-                    "<soapenv:Body>" +
-                        "<ws:orderresult>" +
-                            "<device_id>" + deviceId + "</device_id>" +
-                            "<registration_id>" + regId + "</registration_id>" +
-                            "<ordernumber>" + t.getOrderNumber() + "</ordernumber>" +
-                            "<merchant_id>" + t.getMerchantID() + "</merchant_id>" +
-                            "<date>" + t.getOrderDateUTC() + "</date>" +
-                        "</ws:orderresult>" +
-                    "</soapenv:Body>" +
+                "<soapenv:Header/>" +
+                "<soapenv:Body>" +
+                "<ws:orderresult>" +
+                "<device_id>" + deviceId + "</device_id>" +
+                "<registration_id>" + regId + "</registration_id>" +
+                "<ordernumber>" + t.getOrderNumber() + "</ordernumber>" +
+                "<merchant_id>" + t.getMerchantID() + "</merchant_id>" +
+                "<date>" + t.getOrderDateUTC() + "</date>" +
+                "</ws:orderresult>" +
+                "</soapenv:Body>" +
                 "</soapenv:Envelope>";
     }
 
@@ -90,14 +89,14 @@ public class AssistResultProcessor extends AssistBaseProcessor {
 
                 int eventType = parser.getEventType();
                 while (eventType != XmlPullParser.END_DOCUMENT) {
-                    if(eventType == XmlPullParser.START_TAG) {
+                    if (eventType == XmlPullParser.START_TAG) {
                         switch (parser.getName()) {
-                        case OrderResult.TAG:
-                            orderResult = new OrderResult(parser);
-                            break;
-                        case "Fault":
-                            fault = new Fault(parser);
-                            break;
+                            case OrderResult.TAG:
+                                orderResult = new OrderResult(parser);
+                                break;
+                            case "Fault":
+                                fault = new Fault(parser);
+                                break;
                         }
                     }
                     eventType = parser.next();

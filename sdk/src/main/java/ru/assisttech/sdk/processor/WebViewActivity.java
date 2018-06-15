@@ -36,9 +36,9 @@ import ru.assisttech.sdk.engine.AssistPayEngine;
 /**
  * Класс Activity для отображения и ввода данных в процессе оплаты банковской картой через web сервис Ассист
  * {@link ru.assisttech.sdk.AssistAddress#WEB_SERVICE}
- *
+ * <p>
  * Используется совместно с {@link AssistWebProcessor}
- *
+ * <p>
  * Отображает содержимое HTML страниц в WebView.
  * Осуществляет контроль за загружаемыми страницами.
  * Заполняет поля для карточных данных на соответствующей странице.
@@ -61,20 +61,20 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
 
     private AssistWebProcessor webProcessor;
 
-	private static boolean ignoreSslErrors;
+    private static boolean ignoreSslErrors;
 
-	public static void setIgnoreSslErrors(boolean value) {
-		ignoreSslErrors = value;
-	}
+    public static void setIgnoreSslErrors(boolean value) {
+        ignoreSslErrors = value;
+    }
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-        webProcessor =  AssistPayEngine.getInstance(this).getWebProcessor();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        webProcessor = AssistPayEngine.getInstance(this).getWebProcessor();
         if (!BuildConfig.DEBUG)
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         initUI();
-	}
+    }
 
     @Override
     protected void onResume() {
@@ -82,7 +82,7 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
         if (webProcessor.useCamera()) {
             String url = webView.getUrl();
             if (!TextUtils.isEmpty(url)) {
-                if (url.contains("pay.cfm") && webProcessor.isCardPageDetected()){
+                if (url.contains("pay.cfm") && webProcessor.isCardPageDetected()) {
                     enableMenu = true;
                     invalidateOptionsMenu();
                 }
@@ -90,7 +90,7 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
         }
     }
 
-	// Обработка поворота экрана.
+    // Обработка поворота экрана.
     // Просто отсоединяем от ActivityLayout экземпляр WebView, чтобы не пересоздавать его и не перезагружать страницу.
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -145,12 +145,12 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
     }
 
     @Override
-	public void onBackPressed() {
-	    if(webView != null && webView.canGoBack())
-	        webView.goBack();
-	    else
+    public void onBackPressed() {
+        if (webView != null && webView.canGoBack())
+            webView.goBack();
+        else
             showAlert();
-	}
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -193,9 +193,9 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
     public void startCardScanning() {
         Intent scanIntent = new Intent(this, CardIOActivity.class);
         // customize these values to suit your needs.
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true); 		// default: true
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false); 			// default: false
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false); 	// default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true);        // default: true
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false);            // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false);    // default: false
 
         startActivityForResult(scanIntent, SCAN_REQUEST_CODE);
     }
@@ -301,8 +301,8 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
         // Set webview to ignore SSL error for pages with certificates unknown for Android
         // We check certificates manually using HttpsURLConnection
         @Override
-        public void onReceivedSslError (WebView view, SslErrorHandler handler, SslError error) {
-            if (ignoreSslErrors ) {
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            if (ignoreSslErrors) {
                 Log.e(TAG, "SSL Error ignored");
                 handler.proceed();
             } else {
