@@ -20,6 +20,7 @@ import ru.assisttech.sdk.identification.InstallationInfo;
 import ru.assisttech.sdk.identification.SystemInfo;
 import ru.assisttech.sdk.network.AssistNetworkEngine;
 import ru.assisttech.sdk.processor.AssistCancelProcessor;
+import ru.assisttech.sdk.processor.AssistRecurrentPayProcessor;
 import ru.assisttech.sdk.processor.AssistTokenPayProcessor;
 import ru.assisttech.sdk.registration.AssistRegistrationData;
 import ru.assisttech.sdk.registration.AssistRegistrationProvider;
@@ -186,6 +187,39 @@ public class AssistPayEngine {
             processor.setNetEngine(netEngine);
             processor.setURL(getTokenPayeServiceUrl());
             processor.setListener(new TokenPayProcessorListener());
+            processor.setTransaction(t);
+
+            checkRegistration();
+        }
+    }
+
+    /**
+     * Recurrent Pay
+     */
+    public void payRecurrent(Activity caller, AssistProcessorEnvironment environment) {
+
+        if (isEngineReady()) {
+            saveCallerActivity(caller);
+            setFinished(false);
+
+            AssistMerchant m = environment.getMerchant();
+            AssistPaymentData data = environment.getData();
+
+            AssistTransaction t = new AssistTransaction();
+            t.setMerchantID(m.getID());
+            t.setOrderAmount(data.getFields().get(FieldName.OrderAmount));
+            t.setOrderComment(data.getFields().get(FieldName.OrderComment));
+            t.setOrderCurrency(AssistPaymentData.Currency.valueOf(data.getFields().get(FieldName.OrderCurrency)));
+            t.setOrderNumber(data.getFields().get(FieldName.OrderNumber));
+            if (data.getOrderItems() != null) {
+                t.setOrderItems(data.getOrderItems());
+            }
+            t.setPaymentMethod(CARD_TERMINAL);
+
+            processor = new AssistRecurrentPayProcessor(getContext(), environment);
+            processor.setNetEngine(netEngine);
+            processor.setURL(getRecurrentUrl());
+            processor.setListener(new RecurrentPayProcessorListener());
             processor.setTransaction(t);
 
             checkRegistration();
@@ -403,6 +437,10 @@ public class AssistPayEngine {
         return getServerUrl() + AssistAddress.TOKENPAY_SERVICE;
     }
 
+    private String getRecurrentUrl() {
+        return getServerUrl() + AssistAddress.RECURRENT_URL;
+    }
+
     private String getGetOrderStatusUrl() {
         return getServerUrl() + AssistAddress.GET_ORDER_STATUS_SERVICE;
     }
@@ -594,6 +632,23 @@ public class AssistPayEngine {
         @Override
         public void onError(long id, String message) {
             Log.d(TAG, "TokenPayProcessorListener.onError() " + message);
+            getEngineListener().onFailure(getCallerActivity(), message);
+        }
+    }
+    /**
+     * Слушатель результата вызова сервиса оплаты заказа с токеном {@link AssistRecurrentPayProcessor}
+     */
+    private class RecurrentPayProcessorListener extends BaseProcessorListener {
+        @Override
+        public void onFinished(long id, AssistResult result) {
+            Log.d(TAG, "RecurrentPayProcessorListener.onFinished() " + result.getOrderState());
+            updateTransaction(id, result);
+            getEngineListener().onFinished(getCallerActivity(), getTransaction(id));
+        }
+
+        @Override
+        public void onError(long id, String message) {
+            Log.d(TAG, "RecurrentPayProcessorListener.onError() " + message);
             getEngineListener().onFailure(getCallerActivity(), message);
         }
     }

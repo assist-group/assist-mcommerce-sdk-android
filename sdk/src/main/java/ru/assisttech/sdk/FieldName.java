@@ -3,12 +3,16 @@ package ru.assisttech.sdk;
 public class FieldName {
 
 	static public final String Merchant_ID = "Merchant_ID";
+	static public final String Login = "Login";
+	static public final String Password = "Password";
 	static public final String OrderNumber = "OrderNumber";
 	static public final String Delay = "Delay";
 	static public final String Language = "Language";
 	static public final String OrderComment = "OrderComment";
 	static public final String OrderAmount = "OrderAmount";
+	static public final String Amount = "Amount";
 	static public final String OrderCurrency = "OrderCurrency";
+	static public final String Currency = "Currency";
 	static public final String Lastname = "Lastname";
 	static public final String Firstname = "Firstname";
 	static public final String Middlename = "Middlename";
@@ -97,4 +101,6 @@ public class FieldName {
 	public static final String DepartureDate = "DepartureDate";
 	public static final String EMV = "EMV";
 	public static final String PaymentToken = "PaymentToken";
+	public static final String BillNumber = "BillNumber";
+	public static final String Format = "Format";
 }

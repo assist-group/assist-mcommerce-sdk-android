@@ -22,11 +22,11 @@ import ru.assisttech.sdk.FormatType;
 import ru.assisttech.sdk.network.AssistNetworkEngine;
 import ru.assisttech.sdk.network.HttpResponse;
 
-public class AssistSilentpayProcessor extends AssistBaseProcessor {
+public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
 
-    private static final String TAG = "AssistSilentpayService";
+    public static final String TAG = AssistRecurrentPayProcessor.class.getSimpleName();
 
-    public AssistSilentpayProcessor(Context context, AssistProcessorEnvironment environment) {
+    public AssistRecurrentPayProcessor(Context context, AssistProcessorEnvironment environment) {
         super(context, environment);
     }
 
@@ -37,7 +37,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
              */
         getNetEngine().postRequest(getURL(),
                 new NetworkConnectionErrorListener(),
-                new SilentpayResponseParser(),
+                new RecurrentPayResponseParser(),
                 buildRequest()
         );
     }
@@ -62,11 +62,20 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
             content.append(URLEncoder.encode(FieldName.Merchant_ID, "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getID(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Login", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Login, "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getLogin(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Password", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Password, "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getPassword(), "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.BillNumber, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.PaymentToken), "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.Amount, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.Currency, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
 
             content.append(URLEncoder.encode(FieldName.OrderNumber, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderNumber), "UTF-8")).append("&");
@@ -81,21 +90,6 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
                 content.append(URLEncoder.encode(FieldName.OrderComment, "UTF-8")).append("=");
                 content.append(URLEncoder.encode(params.get(FieldName.OrderComment), "UTF-8")).append("&");
             }
-
-            content.append(URLEncoder.encode("Cardnumber", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.CardNumber), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode("Cardholder", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.CardHolder), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode("Expiremonth", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.ExpireMonth), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode("Expireyear", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.ExpireYear), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode("Cvc2", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.CVC2), "UTF-8")).append("&");
 
             content.append(URLEncoder.encode(FieldName.Lastname, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.Lastname), "UTF-8")).append("&");
@@ -125,7 +119,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
         return content.toString();
     }
 
-    private class SilentpayResponseParser implements AssistNetworkEngine.NetworkResponseProcessor {
+    private class RecurrentPayResponseParser implements AssistNetworkEngine.NetworkResponseProcessor {
 
         protected Map<String, String> responseFields;
         protected String testField = "responsecode";
@@ -133,7 +127,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
         protected boolean isError;
         protected String errorMessage;
 
-        public SilentpayResponseParser() {
+        public RecurrentPayResponseParser() {
             responseFields = new HashMap<>();
 
             responseFields.put("ordernumber", "");
@@ -179,7 +173,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
         @Override
         public void asyncProcessing(HttpResponse response) {
 
-            Log.d(TAG, "SilentpayResponseParser.asyncProcessing()");
+            Log.d(TAG, "RecurrentPayResponseParser.asyncProcessing()");
             Log.d(TAG, "Response: " + response);
 
             try {
