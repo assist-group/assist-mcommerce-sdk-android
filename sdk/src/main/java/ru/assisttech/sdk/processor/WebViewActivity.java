@@ -28,6 +28,7 @@ import java.net.URL;
 
 import io.card.payment.CardIOActivity;
 import io.card.payment.CreditCard;
+import ru.assisttech.sdk.BuildConfig;
 import ru.assisttech.sdk.R;
 import ru.assisttech.sdk.cardreader.AssistCard;
 import ru.assisttech.sdk.engine.AssistPayEngine;
@@ -70,6 +71,7 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         webProcessor =  AssistPayEngine.getInstance(this).getWebProcessor();
+        if (!BuildConfig.DEBUG)
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         initUI();
 	}
