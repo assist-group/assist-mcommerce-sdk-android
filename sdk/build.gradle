@@ -24,4 +24,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'io.card:android-sdk:5.5.1'
     compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'org.jsoup:jsoup:1.11.3'
 }
