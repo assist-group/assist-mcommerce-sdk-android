@@ -3,11 +3,24 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 26
     buildToolsVersion '27.0.3'
+
+    def propertiesFile = file('version.properties')
+    def appVersionCode = 1;
+    def appVersionName = "1.0";
+    if (propertiesFile.canRead()) {
+        Properties properties = new Properties()
+        properties.load(new FileInputStream(propertiesFile))
+        appVersionCode = Integer.parseInt(properties['VERSION_CODE']).intValue();
+        appVersionName = String.valueOf(properties['VERSION_NAME']);
+    } else {
+        throw new Exception("Could not read properties/version/version.properties!")
+    }
+
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 11
-        versionName "1.5.0"
+        versionCode appVersionCode
+        versionName appVersionName
     }
     buildTypes {
         release {

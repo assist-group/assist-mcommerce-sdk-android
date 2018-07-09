@@ -24,7 +24,7 @@ import ru.assisttech.sdk.network.HttpResponse;
 
 public class AssistTokenPayProcessor extends AssistBaseProcessor {
 
-    private static final String TAG = "AssistTokenPayProcessor";
+    public static final String TAG = AssistTokenPayProcessor.class.getSimpleName();
 
     String type;
 
@@ -59,45 +59,45 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
         try {
             Map<String, String> params = data.getFields();
 
-            content.append(URLEncoder.encode("Merchant_ID", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Merchant_ID, "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getID(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Login", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Login, "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getLogin(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Password", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Password, "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getPassword(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("OrderNumber", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.OrderNumber, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderNumber), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("OrderAmount", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.OrderAmount, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("OrderCurrency", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.OrderCurrency, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
 
             if (params.get(FieldName.OrderComment) != null) {
-                content.append(URLEncoder.encode("OrderComment", "UTF-8")).append("=");
+                content.append(URLEncoder.encode(FieldName.OrderComment, "UTF-8")).append("=");
                 content.append(URLEncoder.encode(params.get(FieldName.OrderComment), "UTF-8")).append("&");
             }
 
             content.append(URLEncoder.encode("TokenType", "UTF-8")).append("=");
             content.append(URLEncoder.encode(type, "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("PaymentToken", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.PaymentToken, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.PaymentToken), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Lastname", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Lastname, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.Lastname), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Firstname", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Firstname, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.Firstname), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Email", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Email, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.Email), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Format", "UTF-8")).append("=");
+            content.append(URLEncoder.encode(FieldName.Format, "UTF-8")).append("=");
             content.append(URLEncoder.encode("4", "UTF-8"));
 
         } catch (UnsupportedEncodingException e) {
@@ -205,7 +205,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
             } else {
                 AssistResult result = new AssistResult();
                 if (!responseFields.get(testField).isEmpty()) {
-				    /* Success */
+                    /* Success */
                     result.setApprovalCode(responseFields.get("approvalcode"));
                     result.setBillNumber(responseFields.get("billnumber"));
                     result.setExtra(responseFields.get("responsecode") + " " + responseFields.get("customermessage"));
@@ -220,7 +220,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
                         result.setOrderState(AssistResult.OrderState.DECLINED);
                     }
                 } else {
-				    /* Fault */
+                    /* Fault */
                     result.setExtra(responseFields.get("faultcode") + ": " + responseFields.get("faultstring"));
                 }
                 if (hasListener()) {

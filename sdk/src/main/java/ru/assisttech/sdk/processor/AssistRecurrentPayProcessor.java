@@ -14,19 +14,20 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.assisttech.sdk.AssistMerchant;
 import ru.assisttech.sdk.AssistPaymentData;
 import ru.assisttech.sdk.AssistResult;
+import ru.assisttech.sdk.AssistSDK;
 import ru.assisttech.sdk.FieldName;
 import ru.assisttech.sdk.FormatType;
+import ru.assisttech.sdk.identification.InstallationInfo;
 import ru.assisttech.sdk.network.AssistNetworkEngine;
 import ru.assisttech.sdk.network.HttpResponse;
 
-public class AssistSilentpayProcessor extends AssistBaseProcessor {
+public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
 
-    private static final String TAG = "AssistSilentpayService";
+    public static final String TAG = AssistRecurrentPayProcessor.class.getSimpleName();
 
-    public AssistSilentpayProcessor(Context context, AssistProcessorEnvironment environment) {
+    public AssistRecurrentPayProcessor(Context context, AssistProcessorEnvironment environment) {
         super(context, environment);
     }
 
@@ -37,7 +38,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
          */
         getNetEngine().postRequest(getURL(),
                 new NetworkConnectionErrorListener(),
-                new SilentpayResponseParser(),
+                new RecurrentPayResponseParser(),
                 buildRequest()
         );
     }
@@ -53,66 +54,63 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
     String buildRequest() {
 
         AssistPaymentData data = getEnvironment().getData();
-        AssistMerchant m = getEnvironment().getMerchant();
+        InstallationInfo info = getEnvironment().getPayEngine().getInstInfo();
 
         StringBuilder content = new StringBuilder();
         try {
             Map<String, String> params = data.getFields();
 
             content.append(URLEncoder.encode(FieldName.Merchant_ID, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getID(), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(data.getMerchantID(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Login", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getLogin(), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Login, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(data.getLogin(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Password", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getPassword(), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Password, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(data.getPassword(), "UTF-8")).append("&");
 
             content.append(URLEncoder.encode(FieldName.OrderNumber, "UTF-8")).append("=");
             content.append(URLEncoder.encode(params.get(FieldName.OrderNumber), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.OrderAmount, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.OrderCurrency, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
 
             if (params.get(FieldName.OrderComment) != null) {
                 content.append(URLEncoder.encode(FieldName.OrderComment, "UTF-8")).append("=");
                 content.append(URLEncoder.encode(params.get(FieldName.OrderComment), "UTF-8")).append("&");
             }
 
-            content.append(URLEncoder.encode("Cardnumber", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.CardNumber), "UTF-8")).append("&");
+            //region v 1.4.2
+            content.append(URLEncoder.encode(FieldName.BillNumber, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.BillNumber), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Cardholder", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.CardHolder), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Amount, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.Amount), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Expiremonth", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.ExpireMonth), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Currency, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.Currency), "UTF-8")).append("&");
+            //endregion
 
-            content.append(URLEncoder.encode("Expireyear", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.ExpireYear), "UTF-8")).append("&");
+            //region v 1.5.0
+            content.append(URLEncoder.encode(FieldName.OrderAmount, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode("Cvc2", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.CVC2), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.OrderCurrency, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
+            //endregion
 
-            content.append(URLEncoder.encode(FieldName.Lastname, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Lastname), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Device, "UTF-8")).append("=");
+            content.append(URLEncoder.encode("CommerceSDK", "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode(FieldName.Firstname, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Firstname), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.DeviceUniqueID, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(info.getDeiceUniqueId(), "UTF-8")).append("&");
 
-            content.append(URLEncoder.encode(FieldName.Email, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Email), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.ApplicationName, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(info.appName(), "UTF-8")).append("&");
 
-            /**
-             * Response format
-             * 1 - CSV;
-             * 2 - WDDX;
-             * 3 - XML;
-             * 4 - SOAP;
-             */
+            content.append(URLEncoder.encode(FieldName.ApplicationVersion, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(info.versionName(), "UTF-8")).append("&");
+
+            content.append(URLEncoder.encode(FieldName.SDKVersion, "UTF-8")).append("=");
+            content.append(URLEncoder.encode(AssistSDK.getSdkVersion(), "UTF-8")).append("&");
+
             content.append(URLEncoder.encode(FieldName.Format, "UTF-8")).append("=");
             content.append(URLEncoder.encode(FormatType.SOAP.getId(), "UTF-8")).append("&");
 
@@ -125,7 +123,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
         return content.toString();
     }
 
-    private class SilentpayResponseParser implements AssistNetworkEngine.NetworkResponseProcessor {
+    private class RecurrentPayResponseParser implements AssistNetworkEngine.NetworkResponseProcessor {
 
         protected Map<String, String> responseFields;
         protected String testField = "responsecode";
@@ -133,7 +131,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
         protected boolean isError;
         protected String errorMessage;
 
-        public SilentpayResponseParser() {
+        public RecurrentPayResponseParser() {
             responseFields = new HashMap<>();
 
             responseFields.put("ordernumber", "");
@@ -179,7 +177,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
         @Override
         public void asyncProcessing(HttpResponse response) {
 
-            Log.d(TAG, "SilentpayResponseParser.asyncProcessing()");
+            Log.d(TAG, "RecurrentPayResponseParser.asyncProcessing()");
             Log.d(TAG, "Response: " + response);
 
             try {
@@ -213,7 +211,7 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
         public void syncPostProcessing() {
             Log.d(TAG, "syncPostProcessing()");
 
-            long tID = getTransaction().getId();
+            long tID = getTransaction() != null ? getTransaction().getId() : -1L;
             if (isError) {
                 if (hasListener()) {
                     getListener().onError(tID, errorMessage);

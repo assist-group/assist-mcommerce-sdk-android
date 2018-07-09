@@ -27,9 +27,9 @@ public class AssistCancelProcessor extends AssistBaseProcessor {
 
         AssistMerchant m = getEnvironment().getMerchant();
         String request = buildRequest(m.getID(),
-                                      m.getLogin(),
-                                      m.getPassword(),
-                                      getTransaction().getResult().getBillNumber()
+                m.getLogin(),
+                m.getPassword(),
+                getTransaction().getResult().getBillNumber()
         );
 
         Log.d(TAG, "Request: " + request);
@@ -86,9 +86,8 @@ public class AssistCancelProcessor extends AssistBaseProcessor {
                 parser.nextTag();
                 parser.require(XmlPullParser.START_TAG, null, "soapenv:Envelope");
 
-                if(XmlHelper.next(parser, "soapenv:Body"))
-                {
-                    if(XmlHelper.next(parser, "ws:WSCancelResponseParams") && XmlHelper.next(parser, "order")) {
+                if (XmlHelper.next(parser, "soapenv:Body")) {
+                    if (XmlHelper.next(parser, "ws:WSCancelResponseParams") && XmlHelper.next(parser, "order")) {
                         while (XmlHelper.nextTag(parser)) {
                             String tName = parser.getName();
                             switch (tName) {

@@ -50,10 +50,10 @@ public class HttpResponse {
         builder.append("Response headers:\n");
         if (headers != null && !headers.isEmpty()) {
             Set<Map.Entry<String, List<String>>> entrySet = headers.entrySet();
-            for (Map.Entry<String, List<String>> entry: entrySet) {
+            for (Map.Entry<String, List<String>> entry : entrySet) {
                 StringBuilder valueBuilder = new StringBuilder();
                 List<String> valueList = entry.getValue();
-                for (String value: valueList) {
+                for (String value : valueList) {
                     valueBuilder.append(value).append(" ");
                 }
                 builder.append("    ")
