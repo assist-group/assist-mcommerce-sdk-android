@@ -478,7 +478,7 @@ public class AssistPayEngine {
     }
 
     private void closeProgressDialog() {
-        if (pd != null) {
+        if (pd != null && pd.isShowing()) {
             pd.dismiss();
             pd = null;
         }
