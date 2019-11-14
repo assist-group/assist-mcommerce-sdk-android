@@ -1,14 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    compileSdkVersion rootProject.compile_sdk_version
+    buildToolsVersion rootProject.build_tool_version
+
     defaultConfig {
         applicationId "ru.assisttech.assistsdk.github"
-        minSdkVersion 16
-        targetSdkVersion 26
-        versionCode 11
-        versionName "1.5.0"
+        minSdkVersion rootProject.min_sdk_version
+        targetSdkVersion rootProject.target_sdk_version
+        versionCode rootProject.version_code
+        versionName rootProject.version_name
     }
     //
     // Signing Note (Test)
@@ -53,14 +54,10 @@ android {
             zipAlignEnabled true
         }
     }
-    String appName = name
+
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            String outName = output.outputFile.name.replace(".apk", "-${variant.versionName}.apk")
-            outName = outName.replace(appName, "mobilePayTest")
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    outName)
+        variant.outputs.all { output ->
+            outputFileName = "mobilePayTest-${variant.name}-${variant.versionName}.apk"
         }
     }
     productFlavors {
@@ -69,14 +66,19 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'io.card:android-sdk:5.5.1'
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    implementation project(':sdk')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    implementation 'io.card:android-sdk:5.5.1'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     // Google Wallet
-    compile 'com.google.android.gms:play-services-auth:9.4.0'
-    compile 'com.google.android.gms:play-services-wallet:9.4.0'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-wallet:18.0.0'
 
-    compile 'com.github.mklimek:ssl-utils-android:1.0.1'
+    implementation 'com.github.mklimek:ssl-utils-android:1.0.1'
 
-    compile project(':sdk')
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    // Optional backport
+    implementation 'com.github.dmstocking:support-optional:1.2'
 }

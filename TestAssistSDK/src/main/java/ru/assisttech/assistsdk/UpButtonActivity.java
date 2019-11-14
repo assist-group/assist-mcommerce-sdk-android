@@ -2,7 +2,7 @@ package ru.assisttech.assistsdk;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
+import androidx.core.app.NavUtils;
 import android.view.MenuItem;
 
 /**

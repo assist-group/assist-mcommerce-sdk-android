@@ -154,14 +154,14 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 
         StringBuilder content = new StringBuilder();
         try {
-            SignatureProcessor sp = new SignatureProcessor();
+            SignatureBuilder signBuilder = new SignatureBuilder();
 
             Map<String, String> params = data.getFields();
 
             content.append(URLEncoder.encode(FieldName.Merchant_ID, "UTF-8")).append("=");
             content.append(URLEncoder.encode(m.getID(), "UTF-8")).append("&");
 
-            sp.check4Signature(FieldName.Merchant_ID, m.getID());
+            signBuilder.addField(FieldName.Merchant_ID, m.getID());
 
             Log.d(TAG, "Request parameters:");
             for (Entry<String, String> item : params.entrySet()) {
@@ -171,13 +171,13 @@ public class AssistWebProcessor extends AssistBaseProcessor {
                     content.append(URLEncoder.encode(item.getKey(), "UTF-8")).append("=");
                     content.append(URLEncoder.encode(item.getValue(), "UTF-8")).append("&");
                 }
-                sp.check4Signature(item.getKey(), item.getValue());
+                signBuilder.addField(item.getKey(), item.getValue());
             }
 
             if (!params.containsKey(FieldName.Signature)) {
                 content.append(URLEncoder.encode(FieldName.Signature, "UTF-8")).append("=");
                 content.append(
-                        URLEncoder.encode(sp.calculateSignature(data.getPrivateKey()), "UTF-8")).append("&");
+                        URLEncoder.encode(signBuilder.calculateSignature(data.getPrivateKey()), "UTF-8")).append("&");
             }
 
             // Mobile application specific parameters
@@ -208,6 +208,7 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 
             content.append(URLEncoder.encode("URL_RETURN_NO", "UTF-8")).append("=");
             content.append(URLEncoder.encode(ResultPageProcessor.DECLINE_URL, "UTF-8"));
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -217,7 +218,7 @@ public class AssistWebProcessor extends AssistBaseProcessor {
     /**
      * Signature forming helper class
      */
-    public static class SignatureProcessor {
+    static class SignatureBuilder {
 
         private String Merchant_ID;
         private String OrderNumber;
@@ -225,7 +226,7 @@ public class AssistWebProcessor extends AssistBaseProcessor {
         private String OrderCurrency;
         private String CustomerNumber;
 
-        public void check4Signature(String fieldName, String value) {
+        void addField(String fieldName, String value) {
             switch (fieldName) {
                 case FieldName.Merchant_ID:
                     Merchant_ID = value;
@@ -245,7 +246,7 @@ public class AssistWebProcessor extends AssistBaseProcessor {
             }
         }
 
-        public String calculateSignature(PrivateKey key) {
+        String calculateSignature(PrivateKey key) {
 
             String input = Merchant_ID + ";"
                     + OrderNumber + ";"

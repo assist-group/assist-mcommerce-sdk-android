@@ -104,10 +104,12 @@
             android:layout_height="wrap_content"
             android:text="Оплатить с SamsungPay"/>
 
-        <FrameLayout
-            android:id="@+id/dynamic_wallet_button_fragment"
+        <Button
+            android:id="@+id/btGooglePay"
             android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="Оплатить с GooglePay"/>
 
     </LinearLayout>
 

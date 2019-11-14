@@ -2,10 +2,9 @@ package ru.assisttech.assistsdk;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import androidx.fragment.app.FragmentActivity;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,13 +13,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 
 import ru.assisttech.sdk.AssistPaymentData;
 import ru.assisttech.sdk.AssistSDK;
@@ -75,28 +71,29 @@ public class MainActivity extends FragmentActivity {
         engine.setServerURL("https://payments.t.paysecure.ru");
 
         initPaymentData();
+
         configuration = ApplicationConfiguration.getInstance();
 
-        etMerchantId = (EditText)findViewById(R.id.etMerchantID);
-        etLogin = (EditText)findViewById(R.id.etLogin);
-        etPassword = (EditText)findViewById(R.id.etPassword);
+        etMerchantId = findViewById(R.id.etMerchantID);
+        etLogin = findViewById(R.id.etLogin);
+        etPassword = findViewById(R.id.etPassword);
 
-        etOrderNumber = (EditText)findViewById(R.id.etOrderNumber);
-        etOrderAmount = (EditText)findViewById(R.id.etOrderAmount);
-        spCurrency = (Spinner)findViewById(R.id.spCurrency);
-        etOrderComment = (EditText)findViewById(R.id.etOrderComment);
-        etCustomerNumber = (EditText)findViewById(R.id.etCustomerNumber);
-        etSignature = (EditText)findViewById(R.id.etSignature);
-        spURL = (Spinner)findViewById(R.id.spURL);
-        cbUseCamera = (CheckBox)findViewById(R.id.cbUseCamera);
-        btPay = (Button)findViewById(R.id.btPay);
+        etOrderNumber = findViewById(R.id.etOrderNumber);
+        etOrderAmount = findViewById(R.id.etOrderAmount);
+        spCurrency = findViewById(R.id.spCurrency);
+        etOrderComment = findViewById(R.id.etOrderComment);
+        etCustomerNumber = findViewById(R.id.etCustomerNumber);
+        etSignature = findViewById(R.id.etSignature);
+        spURL = findViewById(R.id.spURL);
+        cbUseCamera = findViewById(R.id.cbUseCamera);
+        btPay = findViewById(R.id.btPay);
 
         // Set defaults
         etMerchantId.setText(DEFAULT_MID);
         etLogin.setText(DEFAULT_LOGIN);
         etPassword.setText(DEFAULT_PASSWORD);
 
-        btLog = (Button)findViewById(R.id.btLog);
+        btLog = findViewById(R.id.btLog);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,

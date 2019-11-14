@@ -133,6 +133,7 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
             webView.getSettings().setUseWideViewPort(false);
             webView.getSettings().setLoadWithOverviewMode(true);
             webView.getSettings().setBuiltInZoomControls(true);
+            webView.getSettings().setDisplayZoomControls(false);
             webView.setWebViewClient(new PayWebViewClient());
             webView.setWebChromeClient(new PayWebChromeClient());
             postRequest();

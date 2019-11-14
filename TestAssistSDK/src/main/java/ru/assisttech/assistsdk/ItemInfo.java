@@ -1,4 +1,4 @@
-package ru.assisttech.assistsdk.androidpay;
+package ru.assisttech.assistsdk;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
