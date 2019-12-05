@@ -4,7 +4,7 @@ Assist Mobile SDK
 
 Реализована поддержка платежей через web сервис Assist https://server_name/pay/order.cfm 
 с отображением информации о ходе платежа в WebView и платежей через сервис https://server_name/pay/tokenpay.cfm
-с использованием InApp Android Pay.
+с использованием Google Pay.
 
 Процесс проведения платежа контролируется экземпляром класса AssistPayEngine.
 Перед началом платежа требуется установить адрес сервера для обработки платежа и
@@ -19,17 +19,15 @@ Assist Mobile SDK
 
 В примере приложения представлен вариант заполенния AssistPaymentData и 
 первичной инициализации AssistPaymentEngine в классе MainActivity.
-В класcе ConfirmationActivity представлена окончательная инциализация AssistPaymentEngine и запуск платежа.
-Так же здесь представлен пример работы с кошельком Google в рамках работы с AndroidPay.
+В классе ConfirmationActivity представлена окончательная инциализация AssistPaymentEngine и запуск платежа.
+Так же здесь представлен пример работы с кошельком Google в рамках работы с GooglePay.
 
-**Поддержка AndroidPay**
+**Поддержка GooglePay**
 
-Для работы с AndroidPay рекомендуется предварительно ознакомиться с документацией на сайте разработчика
-https://developers.google.com/android-pay/.
+Для работы с GooglePay рекомендуется предварительно ознакомиться с документацией на сайте разработчика
+https://developers.google.com/pay
 
-На данный момент работа с кошельком Google представлена в режиме SANDBOX.
-Поэтому для определения возможности проведения тестового платежа требуется связаться
-со службой поддержки Ассист support@assist.ru
+На данный момент работа с кошельком Google представлена в режиме ENVIRONMENT_TEST.
 
 **Поддержка SamsungPay**
 
@@ -39,3 +37,6 @@ https://developers.google.com/android-pay/.
 
 В вашем приложении вы должны следовать инструкции Samsung для инициации платежа через SamsungPay.
 Для завершения оплаты SamsungPay вам необходимо передать данные полученные из SamsungPay SDK в Assist через функцию  AssistPayEngine.payToken().
+
+
+Служба поддержки Ассист support@assist.ru
