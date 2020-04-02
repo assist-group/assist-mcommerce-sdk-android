@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TestAssistSDK/TestAssistSDK.iml" filepath="$PROJECT_DIR$/TestAssistSDK/TestAssistSDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IdeaProjects-assist-mcommerce-sdk-android.iml" filepath="$PROJECT_DIR$/IdeaProjects-assist-mcommerce-sdk-android.iml" group="assist-mcommerce-sdk-android" />
+      <module fileurl="file://$PROJECT_DIR$/TestAssistSDK/TestAssistSDK.iml" filepath="$PROJECT_DIR$/TestAssistSDK/TestAssistSDK.iml" group="assist-mcommerce-sdk-android/TestAssistSDK" />
       <module fileurl="file://$PROJECT_DIR$/assist-mcommerce-sdk-android.iml" filepath="$PROJECT_DIR$/assist-mcommerce-sdk-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sdk/sdk.iml" filepath="$PROJECT_DIR$/sdk/sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sdk/sdk.iml" filepath="$PROJECT_DIR$/sdk/sdk.iml" group="assist-mcommerce-sdk-android/sdk" />
     </modules>
   </component>
 </project>

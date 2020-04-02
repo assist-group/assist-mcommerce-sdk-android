@@ -23,6 +23,7 @@ public abstract class AssistBaseProcessor {
     private AssistTransaction transaction;
 
     private URL url;
+    private URL authUrl;
     private boolean isRunning;
 
     AssistBaseProcessor(Context context, AssistProcessorEnvironment environment) {
@@ -48,6 +49,18 @@ public abstract class AssistBaseProcessor {
 
     public URL getURL() {
         return url;
+    }
+
+    public void setAuthURL(String authUrl) {
+        try {
+            this.authUrl = new URL(authUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public URL getAuthURL() {
+        return authUrl;
     }
 
     public void setTransaction(AssistTransaction t) {

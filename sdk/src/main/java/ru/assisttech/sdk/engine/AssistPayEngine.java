@@ -19,6 +19,7 @@ import ru.assisttech.sdk.R;
 import ru.assisttech.sdk.identification.InstallationInfo;
 import ru.assisttech.sdk.identification.SystemInfo;
 import ru.assisttech.sdk.network.AssistNetworkEngine;
+import ru.assisttech.sdk.processor.AssistDeclineByNumberProcessor;
 import ru.assisttech.sdk.processor.AssistCancelProcessor;
 import ru.assisttech.sdk.processor.AssistRecurrentPayProcessor;
 import ru.assisttech.sdk.processor.AssistTokenPayProcessor;
@@ -238,6 +239,26 @@ public class AssistPayEngine {
     }
 
     /**
+     * Завершение платежа по orderNumber.
+     */
+    public void declineByNumberPayment(Activity caller, AssistTransaction t, AssistMerchant m) {
+
+        if (isEngineReady()) {
+            saveCallerActivity(caller);
+            setFinished(false);
+
+            AssistProcessorEnvironment env = new AssistProcessorEnvironment(this, m, null);
+            processor = new AssistDeclineByNumberProcessor(getContext(), env);
+            processor.setNetEngine(netEngine);
+            processor.setURL(getDeclineByNumberUrl());
+            processor.setAuthURL(getAuthTokenUrl());
+            processor.setListener(new DeclineByNumberProcessorListener());
+            processor.setTransaction(t);
+            checkRegistration();
+        }
+    }
+
+    /**
      * Gets result for certain payment
      *
      * @param id transaction ID {@link AssistTransaction#getId()}
@@ -447,6 +468,14 @@ public class AssistPayEngine {
         return getServerUrl() + AssistAddress.CANCEL_SERVICE;
     }
 
+    private String getDeclineByNumberUrl() {
+        return getServerUrl() + AssistAddress.DECLINE_BY_NUMBER_SERVICE;
+    }
+
+    private String getAuthTokenUrl() {
+        return getServerUrl() + AssistAddress.AUTH_TOKEN_SERVICE;
+    }
+
     private boolean isEngineReady() {
         return processor == null || !processor.isRunning();
     }
@@ -612,6 +641,24 @@ public class AssistPayEngine {
         @Override
         public void onError(long id, String message) {
             Log.d(TAG, "CancelProcessorListener.onError() " + message);
+            getEngineListener().onFailure(getCallerActivity(), message);
+        }
+    }
+
+    /**
+     * Слушатель результата вызова сервиса завершения заказа {@link AssistDeclineByNumberProcessor}
+     */
+    private class DeclineByNumberProcessorListener extends BaseProcessorListener {
+        @Override
+        public void onFinished(long id, AssistResult result) {
+            Log.d(TAG, "DeclineByNumberProcessorListener.onFinished() " + result.getOrderState());
+            updateTransaction(id, result);
+            getEngineListener().onFinished(getCallerActivity(), getTransaction(id));
+        }
+
+        @Override
+        public void onError(long id, String message) {
+            Log.d(TAG, "DeclineByNumberProcessorListener.onError() " + message);
             getEngineListener().onFailure(getCallerActivity(), message);
         }
     }

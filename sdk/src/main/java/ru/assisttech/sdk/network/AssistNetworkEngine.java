@@ -114,6 +114,15 @@ public class AssistNetworkEngine {
         networkTask.execute();
     }
 
+    public void postJSON(URL url, ConnectionErrorListener listener, NetworkResponseProcessor processor, String request) {
+        postJSON(url, listener, processor, request, null);
+    }
+
+    public void postJSON(URL url, ConnectionErrorListener listener, NetworkResponseProcessor processor, String request, String token) {
+        networkTask = new JsonPOSTTask(url, listener, processor, request, token);
+        networkTask.execute();
+    }
+
     /**
      *
      */
@@ -448,6 +457,33 @@ public class AssistNetworkEngine {
             request.addProperty("Content-Type", "text/xml");
             request.addProperty("Content-Encoding", "UTF-8");
             request.addProperty("SOAPAction", getUrl().toString());
+            request.addProperty("Content-Length", Integer.toString(data.length()));
+            return request;
+        }
+    }
+
+    /**
+     * Posts JSON request and parses response
+     */
+    private class JsonPOSTTask extends /*DebugWithoutNetworkTask*/AssistNetworkTask {
+        private String data;
+        private String authtoken;
+
+        public JsonPOSTTask(URL url, ConnectionErrorListener listener, NetworkResponseProcessor processor, String request, String token) {
+            super(url, listener, processor);
+            data = request;
+            authtoken = token;
+        }
+
+        @Override
+        protected HttpRequest customizeRequest(HttpRequest request) {
+            request.setMethod("POST");
+            request.setData(data);
+            request.addProperty("Content-Type", "application/json");
+            request.addProperty("Content-Encoding", "UTF-8");
+            if (authtoken != null) {
+                request.addProperty("Authorization", "Bearer " + authtoken);
+            }
             request.addProperty("Content-Length", Integer.toString(data.length()));
             return request;
         }

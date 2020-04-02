@@ -9,6 +9,8 @@ public class AssistAddress {
 
     public static final String GET_ORDER_STATUS_SERVICE = "/orderresult/mobileorderresult.cfm";
     public static final String CANCEL_SERVICE = "/cancel/wscancel.cfm";
+    public static final String DECLINE_BY_NUMBER_SERVICE = "/api/v1/order/cancel.cfm";
+    public static final String AUTH_TOKEN_SERVICE = "/api/v1/auth/login.cfm";
 
     public static final String SILENTPAY_SERVICE = "/pay/silentpay.cfm";
     public static final String TOKENPAY_SERVICE = "/pay/tokenpay.cfm";

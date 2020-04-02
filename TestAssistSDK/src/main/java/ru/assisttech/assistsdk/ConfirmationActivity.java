@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -42,13 +43,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import ru.assisttech.sdk.AssistMerchant;
 import ru.assisttech.sdk.AssistPaymentData;
+import ru.assisttech.sdk.AssistResult;
 import ru.assisttech.sdk.AssistSDK;
 import ru.assisttech.sdk.FieldName;
 import ru.assisttech.sdk.engine.AssistPayEngine;
 import ru.assisttech.sdk.engine.PayEngineListener;
 import ru.assisttech.sdk.engine.PaymentTokenType;
 import ru.assisttech.sdk.storage.AssistTransaction;
+import ru.assisttech.sdk.storage.AssistTransactionStorage;
 
 /**
  * Экран подтверждения данных платежа и выбора способа оплаты web или AndroidPay если доступен
@@ -85,42 +89,46 @@ public class ConfirmationActivity extends FragmentActivity {
         engine = AssistSDK.getPayEngine(this);
         data = configuration.getPaymentData();
 
-        TextView tvServer = findViewById(R.id.tvServer);
-        TextView tvMerchant = findViewById(R.id.tvMerchant);
-        TextView tvOrderNumber = findViewById(R.id.tvOrderNumber);
-        TextView tvOrderAmount = findViewById(R.id.tvOrderAmount);
-        TextView tvOrderComment = findViewById(R.id.tvOrderComment);
+        if (data != null) {
+            TextView tvServer = findViewById(R.id.tvServer);
+            TextView tvMerchant = findViewById(R.id.tvMerchant);
+            TextView tvOrderNumber = findViewById(R.id.tvOrderNumber);
+            TextView tvOrderAmount = findViewById(R.id.tvOrderAmount);
+            TextView tvOrderComment = findViewById(R.id.tvOrderComment);
 
+            tvServer.setText(configuration.getServer());
 
-        tvServer.setText(configuration.getServer());
-        tvMerchant.setText(
-                String.format(
-                        Locale.getDefault(),
-                        "%1$s [%2$s: %3$s]",
-                        data.getMerchantID(), data.getLogin(), data.getPassword()
-                )
-        );
-        tvOrderNumber.setText(data.getFields().get(FieldName.OrderNumber));
-        tvOrderAmount.setText(
-                String.format(
-                        Locale.getDefault(),
-                        "%1$s %2$s",
-                        data.getFields().get(FieldName.OrderAmount), data.getFields().get(FieldName.OrderCurrency)
-                )
-        );
-        tvOrderComment.setText(data.getFields().get(FieldName.OrderComment));
+            tvMerchant.setText(
+                    String.format(
+                            Locale.getDefault(),
+                            "%1$s [%2$s: %3$s]",
+                            data.getMerchantID(), data.getLogin(), data.getPassword()
+                    )
+            );
+            tvOrderNumber.setText(data.getFields().get(FieldName.OrderNumber));
+            tvOrderAmount.setText(
+                    String.format(
+                            Locale.getDefault(),
+                            "%1$s %2$s",
+                            data.getFields().get(FieldName.OrderAmount), data.getFields().get(FieldName.OrderCurrency)
+                    )
+            );
+            tvOrderComment.setText(data.getFields().get(FieldName.OrderComment));
 
+            Button btPayWeb = findViewById(R.id.btPay);
+            btPayWeb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    payWeb();
+                }
+            });
 
-        Button btPayWeb = findViewById(R.id.btPay);
-        btPayWeb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                payWeb();
-            }
-        });
-
-        enableGooglePay();
-        enableSamsungPay();
+            enableGooglePay();
+            enableSamsungPay();
+        } else {
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+        }
     }
 
 
@@ -293,6 +301,26 @@ public class ConfirmationActivity extends FragmentActivity {
         engine.setEngineListener(new PEngineListener());
         showProgress(getString(R.string.please_wait));
         engine.payToken(this, data, type);
+    }
+
+    private void declineByNumber(String orderNumber) {
+        Log.d(TAG, "Decline by orderNumber=" + orderNumber);
+        AssistMerchant m = new AssistMerchant(data.getMerchantID(), data.getLogin(), data.getPassword());
+        AssistTransactionStorage storage = engine.transactionStorage();
+        Cursor cursor = storage.getData(orderNumber);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            AssistTransaction t = storage.transactionFromCursor(cursor);
+
+            if (t != null) {
+                AssistResult.OrderState state = t.getResult().getOrderState();
+                if (AssistResult.OrderState.IN_PROCESS.equals(state) || AssistResult.OrderState.UNKNOWN.equals(state)) {
+                    engine.setEngineListener(new PEngineListener());
+                    showProgress(getString(R.string.please_wait));
+                    engine.declineByNumberPayment(this, t, m);
+                }
+            }
+        }
     }
 
     private void showAlertDialog(Activity activity, String dlgTitle, String dlgMessage) {

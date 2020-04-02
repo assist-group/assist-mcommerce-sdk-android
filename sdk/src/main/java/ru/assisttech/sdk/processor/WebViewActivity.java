@@ -136,6 +136,10 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
             webView.getSettings().setDisplayZoomControls(false);
             webView.setWebViewClient(new PayWebViewClient());
             webView.setWebChromeClient(new PayWebChromeClient());
+            if (webProcessor == null) {
+                finish();
+                return;
+            }
             postRequest();
         }
         webView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
