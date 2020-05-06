@@ -12,7 +12,7 @@ class AmountWatcher implements TextWatcher {
     private CharSequence mText;
     private EditText mEdit;
 
-    public AmountWatcher(EditText et) {
+    AmountWatcher(EditText et) {
         mEdit = et;
     }
 
@@ -40,4 +40,3 @@ class AmountWatcher implements TextWatcher {
         mText = null;
     }
 }
-

@@ -103,4 +103,33 @@ public class FieldName {
     public static final String PaymentToken = "PaymentToken";
     public static final String BillNumber = "BillNumber";
     public static final String Format = "Format";
+
+    public static final String TaxpayerID = "TaxpayerID";
+    public static final String CustomerDocID = "CustomerDocID";
+    public static final String PaymentAddress = "PaymentAddress";
+    public static final String PaymentPlace = "PaymentPlace";
+    public static final String Cashier = "Cashier";
+    public static final String CashierINN = "CashierINN";
+    public static final String PaymentTerminal = "PaymentTerminal";
+    public static final String TransferOperatorPhone = "TransferOperatorPhone";
+    public static final String TransferOperatorName = "TransferOperatorName";
+    public static final String TransferOperatorAddress = "TransferOperatorAddress";
+    public static final String TransferOperatorINN = "TransferOperatorINN";
+    public static final String PaymentReceiverOperatorPhone = "PaymentReceiverOperatorPhone";
+    public static final String PaymentAgentPhone = "PaymentAgentPhone";
+    public static final String PaymentAgentOperation = "PaymentAgentOperation";
+    public static final String SupplierPhone = "SupplierPhone";
+    public static final String PaymentAgentMode = "PaymentAgentMode";
+    public static final String DocumentRequisite = "DocumentRequisite";
+    public static final String UserRequisites = "UserRequisites";
+    public static final String CompanyName = "CompanyName";
+
+    public static final String GenerateReceipt = "GenerateReceipt";
+    public static final String ReceiptLine = "ReceiptLine";
+    public static final String TAX = "TAX";
+    public static final String FPMode = "FPMode";
+    public static final String TaxationSystem = "TaxationSystem";
+    public static final String prepayment = "prepayment";
+
+    public static final String ChequeItems = "ChequeItems";
 }

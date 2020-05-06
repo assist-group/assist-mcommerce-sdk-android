@@ -29,10 +29,13 @@
 
     <string name="settings_language">Язык:</string>
     <string name="settings_recurring">Рекурренты:</string>
+    <string name="settings_fiscal">Фискальные:</string>
+    <string name="settings_other">Остальное:</string>
     <string name="payment_mode">PaymentMode:</string>
     <string name="customer_name">Покупатель:</string>
     <string name="customer_contact_info">Контакты:</string>
     <string name="customer_address">Адрес:</string>
+    <string name="customer_other">Остальное:</string>
 
     <string name="alert_dlg_title_error">Ошибка</string>
     <string name="alert_dlg_title_network_error">Сетевая ошибка</string>
@@ -69,4 +72,5 @@
     <string name="android_pay_not_installed_message">Для оплаты через Android Pay необходимо установить приложение Android Pay</string>
     <string name="item_name_format">Оплата заказа №%1$s</string>
 
+    <string name="order_items">Позиции заказа:</string>
 </resources>

@@ -174,6 +174,11 @@ public class AssistWebProcessor extends AssistBaseProcessor {
                 signBuilder.addField(item.getKey(), item.getValue());
             }
 
+            if (data.getOrderItems() != null) {
+                content.append(URLEncoder.encode(FieldName.ChequeItems, "UTF-8")).append("=");
+                content.append(URLEncoder.encode(data.getOrderItemsAsJSON(), "UTF-8")).append("&");
+            }
+
             if (!params.containsKey(FieldName.Signature)) {
                 content.append(URLEncoder.encode(FieldName.Signature, "UTF-8")).append("=");
                 content.append(

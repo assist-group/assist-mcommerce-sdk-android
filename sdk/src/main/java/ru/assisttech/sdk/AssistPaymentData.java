@@ -1,11 +1,12 @@
 package ru.assisttech.sdk;
 
 import java.security.PrivateKey;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ru.assisttech.sdk.storage.AssistOrderItem;
+import ru.assisttech.sdk.storage.AssistOrderUtils;
 
 public class AssistPaymentData {
 
@@ -14,7 +15,7 @@ public class AssistPaymentData {
     private String login;
     private String password;
     private PrivateKey privateKey;
-    private ArrayList<AssistOrderItem> orderItems;
+    private List<AssistOrderItem> orderItems;
 
     public AssistPaymentData() {
         values = new HashMap<>();
@@ -56,8 +57,21 @@ public class AssistPaymentData {
         values.put(FieldName.OrderAmount, value);
     }
 
-    public void setOrderItems(ArrayList<AssistOrderItem> items) {
+    public void setOrderItems(List<AssistOrderItem> items) {
         orderItems = items;
+    }
+
+    public void setOrderItemsFromJSON(String json) {
+        if (json == null) {
+            orderItems = null;
+            return;
+        }
+        try {
+            json = json.replaceAll("\\{\\s*\"items\"\\s*:", "").replaceAll("\\]\\s*\\}", "]");
+            orderItems = AssistOrderUtils.fromJsonString(json);
+        } catch (Exception e) {
+            // nothing
+        }
     }
 
     public void setOrderCurrency(Currency value) {
@@ -364,12 +378,124 @@ public class AssistPaymentData {
         return privateKey;
     }
 
+    public void setTaxpayerID(String value) {
+        values.put(FieldName.TaxpayerID, value);
+    }
+
+    public void setCustomerDocID(String value) {
+        values.put(FieldName.CustomerDocID, value);
+    }
+
+    public void setPaymentAddress(String value) {
+        values.put(FieldName.PaymentAddress, value);
+    }
+
+    public void setPaymentPlace(String value) {
+        values.put(FieldName.PaymentPlace, value);
+    }
+
+    public void setCashier(String value) {
+        values.put(FieldName.Cashier, value);
+    }
+
+    public void setCashierINN(String value) {
+        values.put(FieldName.CashierINN, value);
+    }
+
+    public void setPaymentTerminal(String value) {
+        values.put(FieldName.PaymentTerminal, value);
+    }
+
+    public void setTransferOperatorPhone(String value) {
+        values.put(FieldName.TransferOperatorPhone, value);
+    }
+
+    public void setTransferOperatorName(String value) {
+        values.put(FieldName.TransferOperatorName, value);
+    }
+
+    public void setTransferOperatorAddress(String value) {
+        values.put(FieldName.TransferOperatorAddress, value);
+    }
+
+    public void setTransferOperatorINN(String value) {
+        values.put(FieldName.TransferOperatorINN, value);
+    }
+
+    public void setPaymentReceiverOperatorPhone(String value) {
+        values.put(FieldName.PaymentReceiverOperatorPhone, value);
+    }
+
+    public void setPaymentAgentPhone(String value) {
+        values.put(FieldName.PaymentAgentPhone, value);
+    }
+
+    public void setPaymentAgentOperation(String value) {
+        values.put(FieldName.PaymentAgentOperation, value);
+    }
+
+    public void setSupplierPhone(String value) {
+        values.put(FieldName.SupplierPhone, value);
+    }
+
+    public void setPaymentAgentMode(String value) {
+        values.put(FieldName.PaymentAgentMode, value);
+    }
+
+    public void setDocumentRequisite(String value) {
+        values.put(FieldName.DocumentRequisite, value);
+    }
+
+    public void setUserRequisites(String value) {
+        values.put(FieldName.UserRequisites, value);
+    }
+
+    public void setCompanyName(String value) {
+        values.put(FieldName.CompanyName, value);
+    }
+
+    public void setGenerateReceipt(String value) {
+        values.put(FieldName.GenerateReceipt, value);
+    }
+
+    public void setReceiptLine(String value) {
+        values.put(FieldName.ReceiptLine, value);
+    }
+
+    public void setTAX(String value) {
+        values.put(FieldName.TAX, value);
+    }
+
+    public void setFPMode(String value) {
+        values.put(FieldName.FPMode, value);
+    }
+
+    public void setTaxationSystem(String value) {
+        values.put(FieldName.TaxationSystem, value);
+    }
+
+    public void setPrepayment(boolean value) {
+        values.put(FieldName.prepayment, Integer.toString(value ? 1 : 0));
+    }
+
     public Map<String, String> getFields() {
         return values;
     }
 
-    public ArrayList<AssistOrderItem> getOrderItems() {
+    public List<AssistOrderItem> getOrderItems() {
         return orderItems;
+    }
+
+    public String getOrderItemsAsJSON() {
+        String items = "{\"items\":[";
+        for (AssistOrderItem item : orderItems) {
+            items += item.toJSON() + ",";
+        }
+        if (items.endsWith(",")) {
+            items = items.substring(0, items.length() - 1);
+        }
+        items += "]}";
+        return items;
     }
 
     public void clear() {

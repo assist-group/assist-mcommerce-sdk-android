@@ -25,6 +25,13 @@ public class SettingsActivity extends UpButtonActivity {
     static Integer period;
     static String maxDate;
 
+    static String generateReceipt;
+    static String receiptLine;
+    static String tax;
+    static String fpmode;
+    static String taxationSystem;
+    static Boolean prepayment;
+
     private Spinner spLang;
 
     private CheckBox chYMPayment;
@@ -39,6 +46,13 @@ public class SettingsActivity extends UpButtonActivity {
     private EditText etRecMaxAmt;
     private EditText etRecPeriod;
     private EditText etRecMaxDate;
+
+    private EditText etGenerateReceipt;
+    private EditText etReceiptLine;
+    private EditText etTax;
+    private EditText etFPMode;
+    private EditText etTaxationSystem;
+    private CheckBox chPrepayment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,21 +91,40 @@ public class SettingsActivity extends UpButtonActivity {
         if(qiwiBeelinePayment != null) params.setQIWIBeelinePayment(qiwiBeelinePayment);
     }
 
+    public static void setFiscalData(AssistPaymentData params) {
+        if (generateReceipt != null) params.setGenerateReceipt(generateReceipt);
+        if (receiptLine != null) params.setReceiptLine(receiptLine);
+        if (tax != null) params.setTAX(tax);
+        if (fpmode != null) params.setFPMode(fpmode);
+        if (taxationSystem != null) params.setTaxationSystem(taxationSystem);
+    }
+
+    public static void setOtherData(AssistPaymentData params) {
+        if (prepayment != null) params.setPrepayment(prepayment);
+    }
+
     private void initUI() {
-        spLang = (Spinner) findViewById(R.id.spLanguage);
+        spLang = findViewById(R.id.spLanguage);
 
-        chYMPayment = (CheckBox) findViewById(R.id.chYMPayment);
-        chWMPayment = (CheckBox) findViewById(R.id.chWMPayment);
-        chQIWIPayment = (CheckBox) findViewById(R.id.chQIWIPayment);
-        chQIWIMTSPayment = (CheckBox) findViewById(R.id.chQIWIMtsPayment);
-        chQIWIMegafonPayment = (CheckBox) findViewById(R.id.chQIWIMegafonPayment);
-        chQIWIBeelinePayment = (CheckBox) findViewById(R.id.chQIWIBeelinePayment);
+        chYMPayment = findViewById(R.id.chYMPayment);
+        chWMPayment = findViewById(R.id.chWMPayment);
+        chQIWIPayment = findViewById(R.id.chQIWIPayment);
+        chQIWIMTSPayment = findViewById(R.id.chQIWIMtsPayment);
+        chQIWIMegafonPayment = findViewById(R.id.chQIWIMegafonPayment);
+        chQIWIBeelinePayment = findViewById(R.id.chQIWIBeelinePayment);
 
-        chRecurringPayment = (CheckBox) findViewById(R.id.chRecurringIndicator);
-        etRecMinAmt = (EditText) findViewById(R.id.etRecMinAmt);
-        etRecMaxAmt = (EditText) findViewById(R.id.etRecMaxAmt);
-        etRecPeriod = (EditText) findViewById(R.id.etRecPeriod);
-        etRecMaxDate = (EditText) findViewById(R.id.etRecMaxDate);
+        chRecurringPayment = findViewById(R.id.chRecurringIndicator);
+        etRecMinAmt = findViewById(R.id.etRecMinAmt);
+        etRecMaxAmt = findViewById(R.id.etRecMaxAmt);
+        etRecPeriod = findViewById(R.id.etRecPeriod);
+        etRecMaxDate = findViewById(R.id.etRecMaxDate);
+
+        etGenerateReceipt = findViewById(R.id.etGenerateReceipt);
+        etReceiptLine = findViewById(R.id.etReceiptLine);
+        etTax = findViewById(R.id.etTax);
+        etFPMode = findViewById(R.id.etFPMode);
+        etTaxationSystem = findViewById(R.id.etTaxationSystem);
+        chPrepayment = findViewById(R.id.chPrepayment);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
@@ -150,10 +183,31 @@ public class SettingsActivity extends UpButtonActivity {
         if(maxDate != null) {
             etRecMaxDate.setText(maxDate);
         }
+
+        /* Fiscal */
+        if (generateReceipt != null) {
+            etGenerateReceipt.setText(generateReceipt);
+        }
+        if (receiptLine != null) {
+            etReceiptLine.setText(receiptLine);
+        }
+        if (tax != null) {
+            etTax.setText(tax);
+        }
+        if (fpmode != null) {
+            etFPMode.setText(fpmode);
+        }
+        if (taxationSystem != null) {
+            etTaxationSystem.setText(taxationSystem);
+        }
+
+        /* Prepayment */
+        if (prepayment != null) {
+            chPrepayment.setChecked(prepayment);
+        }
     }
 
     private void collectData() {
-
         /* Language */
         int pos = spLang.getSelectedItemPosition();
         switch(pos) {
@@ -182,5 +236,15 @@ public class SettingsActivity extends UpButtonActivity {
         maxAmount = etRecMaxAmt.getText().toString();
         period = Integer.getInteger(etRecPeriod.getText().toString());
         maxDate = etRecMaxDate.getText().toString();
+
+        /* Fiscal */
+        generateReceipt = etGenerateReceipt.getText().toString();
+        receiptLine = etReceiptLine.getText().toString();
+        tax = etTax.getText().toString();
+        fpmode = etFPMode.getText().toString();
+        taxationSystem = etTaxationSystem.getText().toString();
+
+        /* Prepayment */
+        prepayment = chPrepayment.isChecked();
     }
 }

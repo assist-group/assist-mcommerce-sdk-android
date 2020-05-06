@@ -12,7 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -35,6 +37,11 @@ public class MainActivity extends FragmentActivity {
     private static final String DEFAULT_LOGIN = "admin679471";
     private static final String DEFAULT_PASSWORD = "admin679471";
 
+    private static final String DEFAULT_ITEMS = "{\"items\":[\n" +
+            "{\"id\"=1, \"name\"=\"Хлеб\", \"quantity\"=2, \"price\"=5, \"amount\"=10},\n" +
+            "{\"id\"=2, \"name\"=\"Мелочь\", \"quantity\"=1, \"price\"=0.11, \"amount\"=0.11}\n" +
+            "]}";
+
     private String[] urls = {
             "https://payments.t.paysecure.ru",
             "https://test.paysec.by",
@@ -56,6 +63,9 @@ public class MainActivity extends FragmentActivity {
     private CheckBox cbUseCamera;
     private Button btPay;
     private Button btLog;
+
+    private LinearLayout viewItems;
+    private TextView tvItems;
 
     protected ApplicationConfiguration configuration;
     private AssistPayEngine engine;
@@ -81,6 +91,8 @@ public class MainActivity extends FragmentActivity {
         etOrderNumber = findViewById(R.id.etOrderNumber);
         etOrderAmount = findViewById(R.id.etOrderAmount);
         spCurrency = findViewById(R.id.spCurrency);
+        viewItems = findViewById(R.id.llOrderItems);
+        tvItems = findViewById(R.id.tvOrderItems);
         etOrderComment = findViewById(R.id.etOrderComment);
         etCustomerNumber = findViewById(R.id.etCustomerNumber);
         etSignature = findViewById(R.id.etSignature);
@@ -92,6 +104,8 @@ public class MainActivity extends FragmentActivity {
         etMerchantId.setText(DEFAULT_MID);
         etLogin.setText(DEFAULT_LOGIN);
         etPassword.setText(DEFAULT_PASSWORD);
+
+        tvItems.setText(DEFAULT_ITEMS);
 
         btLog = findViewById(R.id.btLog);
 
@@ -110,6 +124,14 @@ public class MainActivity extends FragmentActivity {
         );
         urlsAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
         spURL.setAdapter(urlsAdapter);
+
+        viewItems.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editOrderItems();
+            }
+        });
+
         btPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,6 +151,14 @@ public class MainActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (EditOrderItemsActivity.itemsJSON != null && tvItems != null) {
+            tvItems.setText(EditOrderItemsActivity.itemsJSON);
+        }
     }
 
     @Override
@@ -172,6 +202,12 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private void editOrderItems() {
+	    Intent intent = new Intent(this, EditOrderItemsActivity.class);
+        intent.putExtra("items", tvItems.getText());
+        startActivity(intent);
+    }
+
     private void assemblePaymentData() {
         data.setMerchantId(etMerchantId.getText().toString());
         data.setLogin(etLogin.getText().toString());
@@ -196,9 +232,14 @@ public class MainActivity extends FragmentActivity {
         CustomerActivity.setContactData(data);
         CustomerActivity.setCustomerData(data);
         CustomerActivity.setCustomerExData(data);
+        CustomerActivity.setCustomerOtherData(data);
         SettingsActivity.setSettings(data);
         SettingsActivity.setPaymentMode(data);
         SettingsActivity.setRecurringData(data);
+        SettingsActivity.setFiscalData(data);
+        SettingsActivity.setOtherData(data);
+
+        data.setOrderItemsFromJSON(tvItems.getText().toString());
     }
 
     private void setConfiguration() {

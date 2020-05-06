@@ -88,6 +88,15 @@
             android:value=".MainActivity"/>
         </activity>
 
+        <activity
+            android:name=".EditOrderItemsActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
+
         <activity android:name=".ViewResultActivity" />
 
         <activity
@@ -131,7 +140,7 @@
                 android:value=".MainActivity"/>
         </activity>
 
-<!--        <receiver-->
+        <!--        <receiver-->
 <!--            android:name="com.google.android.gms.wallet.EnableWalletOptimizationReceiver"-->
 <!--            android:exported="false">-->
 <!--            <intent-filter>-->

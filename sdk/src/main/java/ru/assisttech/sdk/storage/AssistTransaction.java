@@ -2,7 +2,7 @@ package ru.assisttech.sdk.storage;
 
 import android.text.TextUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import ru.assisttech.sdk.AssistPaymentData.Currency;
 import ru.assisttech.sdk.AssistResult;
@@ -22,7 +22,7 @@ public class AssistTransaction {
     private boolean requireUserSignature;
     private byte[] userSignature;
     private AssistResult result;
-    private ArrayList<AssistOrderItem> orderItems;
+    private List<AssistOrderItem> orderItems;
 
     public enum PaymentMethod {
         CARD_MANUAL,
@@ -92,7 +92,7 @@ public class AssistTransaction {
         return orderItems != null;
     }
 
-    public ArrayList<AssistOrderItem> getOrderItems() {
+    public List<AssistOrderItem> getOrderItems() {
         return orderItems;
     }
 
@@ -150,7 +150,7 @@ public class AssistTransaction {
         result = value;
     }
 
-    public void setOrderItems(ArrayList<AssistOrderItem> items) {
+    public void setOrderItems(List<AssistOrderItem> items) {
         orderItems = items;
     }
 

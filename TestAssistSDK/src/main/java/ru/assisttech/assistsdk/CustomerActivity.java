@@ -20,6 +20,25 @@ public class CustomerActivity extends UpButtonActivity {
     private static final String DEFAULT_STATE = "Leningradskaya oblast";
     private static final String DEFAULT_CITY = "Saint-Petersburg";
     private static final String DEFAULT_ZIP = "192334";
+    private static final String DEFAULT_TAXPAYER_ID = "";
+    private static final String DEFAULT_CUSTOMER_DOC_ID = "";
+    private static final String DEFAULT_PAYMENT_ADDRESS = "";
+    private static final String DEFAULT_PAYMENT_PLACE = "";
+    private static final String DEFAULT_CASHIER = "";
+    private static final String DEFAULT_CASHIER_INN = "";
+    private static final String DEFAULT_PAYMENT_TERMINAL = "";
+    private static final String DEFAULT_TRANSFER_OPERATOR_PHONE = "";
+    private static final String DEFAULT_TRANSFER_OPERATOR_NAME = "";
+    private static final String DEFAULT_TRANSFER_OPERATOR_ADDRESS = "";
+    private static final String DEFAULT_TRANSFER_OPERATOR_INN = "";
+    private static final String DEFAULT_PAYMENT_RECEIVER_OPERATOR_PHONE = "";
+    private static final String DEFAULT_PAYMENT_AGENT_PHONE = "";
+    private static final String DEFAULT_PAYMENT_AGENT_OPERATION = "";
+    private static final String DEFAULT_SUPPLIER_PHONE = "";
+    private static final String DEFAULT_PAYMENT_AGENT_MODE = "";
+    private static final String DEFAULT_DOCUMENT_REQUISITE = "";
+    private static final String DEFAULT_USER_REQUISITES = "";
+    private static final String DEFAULT_COMPANY_NAME = "";
 
     static String lastName = DEFAULT_LAST_NAME;
     static String firstName = DEFAULT_FIRST_NAME;
@@ -37,6 +56,26 @@ public class CustomerActivity extends UpButtonActivity {
     static String city;
     static String zip;
 
+    static String taxpayerID;
+    static String customerDocID;
+    static String paymentAddress;
+    static String paymentPlace;
+    static String cashier;
+    static String cashierINN;
+    static String paymentTerminal;
+    static String transferOperatorPhone;
+    static String transferOperatorName;
+    static String transferOperatorAddress;
+    static String transferOperatorINN;
+    static String paymentReceiverOperatorPhone;
+    static String paymentAgentPhone;
+    static String paymentAgentOperation;
+    static String supplierPhone;
+    static String paymentAgentMode;
+    static String documentRequisite;
+    static String userRequisites;
+    static String companyName;
+
     private EditText etLastName;
     private EditText etFirstName;
     private EditText etMiddleName;
@@ -52,6 +91,26 @@ public class CustomerActivity extends UpButtonActivity {
     private EditText etState;
     private EditText etCity;
     private EditText etZip;
+
+    private EditText etTaxpayerID;
+    private EditText etCustomerDocID;
+    private EditText etPaymentAddress;
+    private EditText etPaymentPlace;
+    private EditText etCashier;
+    private EditText etCashierINN;
+    private EditText etPaymentTerminal;
+    private EditText etTransferOperatorPhone;
+    private EditText etTransferOperatorName;
+    private EditText etTransferOperatorAddress;
+    private EditText etTransferOperatorINN;
+    private EditText etPaymentReceiverOperatorPhone;
+    private EditText etPaymentAgentPhone;
+    private EditText etPaymentAgentOperation;
+    private EditText etSupplierPhone;
+    private EditText etPaymentAgentMode;
+    private EditText etDocumentRequisite;
+    private EditText etUserRequisites;
+    private EditText etCompanyName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +199,104 @@ public class CustomerActivity extends UpButtonActivity {
         }
     }
 
+    public static void setCustomerOtherData(AssistPaymentData params) {
+        if (taxpayerID != null) {
+            params.setTaxpayerID(taxpayerID);
+        } else {
+            params.setTaxpayerID(DEFAULT_TAXPAYER_ID);
+        }
+        if (customerDocID != null) {
+            params.setCustomerDocID(customerDocID);
+        } else {
+            params.setCustomerDocID(DEFAULT_CUSTOMER_DOC_ID);
+        }
+        if (paymentAddress != null) {
+            params.setPaymentAddress(paymentAddress);
+        } else {
+            params.setPaymentAddress(DEFAULT_PAYMENT_ADDRESS);
+        }
+        if (paymentPlace != null) {
+            params.setPaymentPlace(paymentPlace);
+        } else {
+            params.setPaymentPlace(DEFAULT_PAYMENT_PLACE);
+        }
+        if (cashier != null) {
+            params.setCashier(cashier);
+        } else {
+            params.setCashier(DEFAULT_CASHIER);
+        }
+        if (cashierINN != null) {
+            params.setCashierINN(cashierINN);
+        } else {
+            params.setCashierINN(DEFAULT_CASHIER_INN);
+        }
+        if (paymentTerminal != null) {
+            params.setPaymentTerminal(paymentTerminal);
+        } else {
+            params.setPaymentTerminal(DEFAULT_PAYMENT_TERMINAL);
+        }
+        if (transferOperatorPhone != null) {
+            params.setTransferOperatorPhone(transferOperatorPhone);
+        } else {
+            params.setTransferOperatorPhone(DEFAULT_TRANSFER_OPERATOR_PHONE);
+        }
+        if (transferOperatorName != null) {
+            params.setTransferOperatorName(transferOperatorName);
+        } else {
+            params.setTransferOperatorName(DEFAULT_TRANSFER_OPERATOR_NAME);
+        }
+        if (transferOperatorAddress != null) {
+            params.setTransferOperatorAddress(transferOperatorAddress);
+        } else {
+            params.setTransferOperatorAddress(DEFAULT_TRANSFER_OPERATOR_ADDRESS);
+        }
+        if (transferOperatorINN != null) {
+            params.setTransferOperatorINN(transferOperatorINN);
+        } else {
+            params.setTransferOperatorINN(DEFAULT_TRANSFER_OPERATOR_INN);
+        }
+        if (paymentReceiverOperatorPhone != null) {
+            params.setPaymentReceiverOperatorPhone(paymentReceiverOperatorPhone);
+        } else {
+            params.setPaymentReceiverOperatorPhone(DEFAULT_PAYMENT_RECEIVER_OPERATOR_PHONE);
+        }
+        if (paymentAgentPhone != null) {
+            params.setPaymentAgentPhone(paymentAgentPhone);
+        } else {
+            params.setPaymentAgentPhone(DEFAULT_PAYMENT_AGENT_PHONE);
+        }
+        if (paymentAgentOperation != null) {
+            params.setPaymentAgentOperation(paymentAgentOperation);
+        } else {
+            params.setPaymentAgentOperation(DEFAULT_PAYMENT_AGENT_OPERATION);
+        }
+        if (supplierPhone != null) {
+            params.setSupplierPhone(supplierPhone);
+        } else {
+            params.setSupplierPhone(DEFAULT_SUPPLIER_PHONE);
+        }
+        if (paymentAgentMode != null) {
+            params.setPaymentAgentMode(paymentAgentMode);
+        } else {
+            params.setPaymentAgentMode(DEFAULT_PAYMENT_AGENT_MODE);
+        }
+        if (documentRequisite != null) {
+            params.setDocumentRequisite(documentRequisite);
+        } else {
+            params.setDocumentRequisite(DEFAULT_DOCUMENT_REQUISITE);
+        }
+        if (userRequisites != null) {
+            params.setUserRequisites(userRequisites);
+        } else {
+            params.setUserRequisites(DEFAULT_USER_REQUISITES);
+        }
+        if (companyName != null) {
+            params.setCompanyName(companyName);
+        } else {
+            params.setCompanyName(DEFAULT_COMPANY_NAME);
+        }
+    }
+
     private void collectData() {
         lastName = etLastName.getText().toString();
         firstName = etFirstName.getText().toString();
@@ -156,24 +313,64 @@ public class CustomerActivity extends UpButtonActivity {
         state = etState.getText().toString();
         city = etCity.getText().toString();
         zip = etZip.getText().toString();
+
+        taxpayerID = etTaxpayerID.getText().toString();
+        customerDocID = etCustomerDocID.getText().toString();
+        paymentAddress = etPaymentAddress.getText().toString();
+        paymentPlace = etPaymentPlace.getText().toString();
+        cashier = etCashier.getText().toString();
+        cashierINN = etCashierINN.getText().toString();
+        paymentTerminal = etPaymentTerminal.getText().toString();
+        transferOperatorPhone = etTransferOperatorPhone.getText().toString();
+        transferOperatorName = etTransferOperatorName.getText().toString();
+        transferOperatorAddress = etTransferOperatorAddress.getText().toString();
+        transferOperatorINN = etTransferOperatorINN.getText().toString();
+        paymentReceiverOperatorPhone = etPaymentReceiverOperatorPhone.getText().toString();
+        paymentAgentPhone = etPaymentAgentPhone.getText().toString();
+        paymentAgentOperation = etPaymentAgentOperation.getText().toString();
+        supplierPhone = etSupplierPhone.getText().toString();
+        paymentAgentMode = etPaymentAgentMode.getText().toString();
+        documentRequisite = etDocumentRequisite.getText().toString();
+        userRequisites = etUserRequisites.getText().toString();
+        companyName = etCompanyName.getText().toString();
     }
 
     private void initUI() {
-        etLastName = (EditText) findViewById(R.id.etLastname);
-        etFirstName = (EditText) findViewById(R.id.etFirstname);
-        etMiddleName = (EditText) findViewById(R.id.etMiddlename);
+        etLastName = findViewById(R.id.etLastname);
+        etFirstName = findViewById(R.id.etFirstname);
+        etMiddleName = findViewById(R.id.etMiddlename);
 
-        etEmail = (EditText) findViewById(R.id.etEmail);
-        etAddress = (EditText) findViewById(R.id.etAddress);
-        etHomePhone = (EditText) findViewById(R.id.etHomePhone);
-        etWorkPhone = (EditText) findViewById(R.id.etWorkPhone);
-        etMobilePhone = (EditText) findViewById(R.id.etMobilePhone);
-        etFax = (EditText) findViewById(R.id.etFax);
+        etEmail = findViewById(R.id.etEmail);
+        etAddress = findViewById(R.id.etAddress);
+        etHomePhone = findViewById(R.id.etHomePhone);
+        etWorkPhone = findViewById(R.id.etWorkPhone);
+        etMobilePhone = findViewById(R.id.etMobilePhone);
+        etFax = findViewById(R.id.etFax);
 
-        etCountry = (EditText) findViewById(R.id.etCountry);
-        etState = (EditText) findViewById(R.id.etState);
-        etCity = (EditText) findViewById(R.id.etCity);
-        etZip = (EditText) findViewById(R.id.etZip);
+        etCountry = findViewById(R.id.etCountry);
+        etState = findViewById(R.id.etState);
+        etCity = findViewById(R.id.etCity);
+        etZip = findViewById(R.id.etZip);
+
+        etTaxpayerID = findViewById(R.id.etTaxpayerID);
+        etCustomerDocID = findViewById(R.id.etCustomerDocID);
+        etPaymentAddress = findViewById(R.id.etPaymentAddress);
+        etPaymentPlace = findViewById(R.id.etPaymentPlace);
+        etCashier = findViewById(R.id.etCashier);
+        etCashierINN = findViewById(R.id.etCashierINN);
+        etPaymentTerminal = findViewById(R.id.etPaymentTerminal);
+        etTransferOperatorPhone = findViewById(R.id.etTransferOperatorPhone);
+        etTransferOperatorName = findViewById(R.id.etTransferOperatorName);
+        etTransferOperatorAddress = findViewById(R.id.etTransferOperatorAddress);
+        etTransferOperatorINN = findViewById(R.id.etTransferOperatorINN);
+        etPaymentReceiverOperatorPhone = findViewById(R.id.etPaymentReceiverOperatorPhone);
+        etPaymentAgentPhone = findViewById(R.id.etPaymentAgentPhone);
+        etPaymentAgentOperation = findViewById(R.id.etPaymentAgentOperation);
+        etSupplierPhone = findViewById(R.id.etSupplierPhone);
+        etPaymentAgentMode = findViewById(R.id.etPaymentAgentMode);
+        etDocumentRequisite = findViewById(R.id.etDocumentRequisite);
+        etUserRequisites = findViewById(R.id.etUserRequisites);
+        etCompanyName = findViewById(R.id.etCompanyName);
 
         if (lastName != null) {
             etLastName.setText(lastName);
@@ -225,6 +422,82 @@ public class CustomerActivity extends UpButtonActivity {
 
         if (zip != null) {
             etZip.setText(zip);
+        }
+
+        if (taxpayerID != null) {
+            etTaxpayerID.setText(taxpayerID);
+        }
+
+        if (customerDocID != null) {
+            etCustomerDocID.setText(customerDocID);
+        }
+
+        if (paymentAddress != null) {
+            etPaymentAddress.setText(paymentAddress);
+        }
+
+        if (paymentPlace != null) {
+            etPaymentPlace.setText(paymentPlace);
+        }
+
+        if (cashier != null) {
+            etCashier.setText(cashier);
+        }
+
+        if (cashierINN != null) {
+            etCashierINN.setText(cashierINN);
+        }
+
+        if (paymentTerminal != null) {
+            etPaymentTerminal.setText(paymentTerminal);
+        }
+
+        if (transferOperatorPhone != null) {
+            etTransferOperatorPhone.setText(transferOperatorPhone);
+        }
+
+        if (transferOperatorName != null) {
+            etTransferOperatorName.setText(transferOperatorName);
+        }
+
+        if (transferOperatorAddress != null) {
+            etTransferOperatorAddress.setText(transferOperatorAddress);
+        }
+
+        if (transferOperatorINN != null) {
+            etTransferOperatorINN.setText(transferOperatorINN);
+        }
+
+        if (paymentReceiverOperatorPhone != null) {
+            etPaymentReceiverOperatorPhone.setText(paymentReceiverOperatorPhone);
+        }
+
+        if (paymentAgentPhone != null) {
+            etPaymentAgentPhone.setText(paymentAgentPhone);
+        }
+
+        if (paymentAgentOperation != null) {
+            etPaymentAgentOperation.setText(paymentAgentOperation);
+        }
+
+        if (supplierPhone != null) {
+            etSupplierPhone.setText(supplierPhone);
+        }
+
+        if (paymentAgentMode != null) {
+            etPaymentAgentMode.setText(paymentAgentMode);
+        }
+
+        if (documentRequisite != null) {
+            etDocumentRequisite.setText(documentRequisite);
+        }
+
+        if (userRequisites != null) {
+            etUserRequisites.setText(userRequisites);
+        }
+
+        if (companyName != null) {
+            etCompanyName.setText(companyName);
         }
     }
 }
