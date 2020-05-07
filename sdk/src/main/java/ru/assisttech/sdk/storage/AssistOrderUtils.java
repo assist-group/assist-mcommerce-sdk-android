@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class AssistOrderUtils {
@@ -48,50 +49,58 @@ public class AssistOrderUtils {
         for (int i = 0; i < jsonItems.length(); i++) {
             JSONObject jsonItem = jsonItems.getJSONObject(i);
 
-            String price = jsonItem.getString(ORDER_ITEM_PRICE);
-            String quantity = jsonItem.getString(ORDER_ITEM_QUANTITY);
-            String amount = jsonItem.getString(ORDER_ITEM_AMOUNT);
+            String price = getElement(jsonItem, ORDER_ITEM_PRICE);
+            String quantity = getElement(jsonItem, ORDER_ITEM_QUANTITY);
+            String amount = getElement(jsonItem, ORDER_ITEM_AMOUNT);
 
-            AssistOrderItem item = new AssistOrderItem(quantity, price, amount);
+            if (price != null && quantity != null && amount != null) {
+                AssistOrderItem item = new AssistOrderItem(quantity, price, amount);
 
-            item.setId(jsonItem.getInt(ORDER_ITEM_ID));
-            item.setName(getElement(jsonItem, ORDER_ITEM_NAME));
-            item.setProduct(getElement(jsonItem, ORDER_ITEM_PRODUCT));
-            item.setTax(getElement(jsonItem, ORDER_ITEM_TAX));
-            item.setFpmode(getElement(jsonItem, ORDER_ITEM_FPMODE));
-            item.setHscode(getElement(jsonItem, ORDER_ITEM_HSCODE));
-            item.setEancode(getElement(jsonItem, ORDER_ITEM_EANCODE));
-            item.setGs1code(getElement(jsonItem, ORDER_ITEM_GS1CODE));
-            item.setFurcode(getElement(jsonItem, ORDER_ITEM_FURCODE));
-            item.setUncode(getElement(jsonItem, ORDER_ITEM_UNCODE));
-            item.setEgaiscode(getElement(jsonItem, ORDER_ITEM_EGAISCODE));
-            item.setSubjtype(getElement(jsonItem, ORDER_ITEM_SUBJTYPE));
-            item.setBonus(getElement(jsonItem, ORDER_ITEM_BONUS));
-            item.setDiscount(getElement(jsonItem, ORDER_ITEM_DISCOUNT));
-            item.setAgentMode(getElement(jsonItem, ORDER_ITEM_AGENT_MODE));
-            item.setTransferOperatorPhone(getElement(jsonItem, ORDER_ITEM_TRANSFER_OPERATOR_PHONE));
-            item.setTransferOperatorName(getElement(jsonItem, ORDER_ITEM_TRANSFER_OPERATOR_NAME));
-            item.setTransferOperatorAddress(getElement(jsonItem, ORDER_ITEM_TRANSFER_OPERATOR_ADDRESS));
-            item.setTransferOperatorINN(getElement(jsonItem, ORDER_ITEM_TRANSFER_OPERATOR_INN));
-            item.setPaymentReceiverOperatorPhone(getElement(jsonItem, ORDER_ITEM_PAYMENT_RECEIVER_OPERATOR_PHONE));
-            item.setPaymentAgentOperation(getElement(jsonItem, ORDER_ITEM_PAYMENT_AGENT_OPERATION));
-            item.setPaymentAgentPhone(getElement(jsonItem, ORDER_ITEM_PAYMENT_AGENT_PHONE));
-            item.setSupplierPhone(getElement(jsonItem, ORDER_ITEM_SUPPLIER_PHONE));
-            item.setSupplierName(getElement(jsonItem, ORDER_ITEM_SUPPLIER_NAME));
-            item.setSupplierINN(getElement(jsonItem, ORDER_ITEM_SUPPLIER_INN));
-            item.setExcise(getElement(jsonItem, ORDER_ITEM_EXCISE));
-            item.setCountryOfOrigin(getElement(jsonItem, ORDER_ITEM_COUNTRY_OF_ORIGIN));
-            item.setNumberOfCustomsDeclaration(getElement(jsonItem, ORDER_ITEM_NUMBER_OF_CUSTOMS_DECLARATION));
-            item.setLineAttribute(getElement(jsonItem, ORDER_ITEM_LINE_ATTRIBUTE));
+                item.setId(jsonItem.getInt(ORDER_ITEM_ID));
+                item.setName(getElement(jsonItem, ORDER_ITEM_NAME));
+                item.setProduct(getElement(jsonItem, ORDER_ITEM_PRODUCT));
+                item.setTax(getElement(jsonItem, ORDER_ITEM_TAX));
+                item.setFpmode(getElement(jsonItem, ORDER_ITEM_FPMODE));
+                item.setHscode(getElement(jsonItem, ORDER_ITEM_HSCODE));
+                item.setEancode(getElement(jsonItem, ORDER_ITEM_EANCODE));
+                item.setGs1code(getElement(jsonItem, ORDER_ITEM_GS1CODE));
+                item.setFurcode(getElement(jsonItem, ORDER_ITEM_FURCODE));
+                item.setUncode(getElement(jsonItem, ORDER_ITEM_UNCODE));
+                item.setEgaiscode(getElement(jsonItem, ORDER_ITEM_EGAISCODE));
+                item.setSubjtype(getElement(jsonItem, ORDER_ITEM_SUBJTYPE));
+                item.setBonus(getElement(jsonItem, ORDER_ITEM_BONUS));
+                item.setDiscount(getElement(jsonItem, ORDER_ITEM_DISCOUNT));
+                item.setAgentMode(getElement(jsonItem, ORDER_ITEM_AGENT_MODE));
+                item.setTransferOperatorPhone(getElement(jsonItem, ORDER_ITEM_TRANSFER_OPERATOR_PHONE));
+                item.setTransferOperatorName(getElement(jsonItem, ORDER_ITEM_TRANSFER_OPERATOR_NAME));
+                item.setTransferOperatorAddress(getElement(jsonItem, ORDER_ITEM_TRANSFER_OPERATOR_ADDRESS));
+                item.setTransferOperatorINN(getElement(jsonItem, ORDER_ITEM_TRANSFER_OPERATOR_INN));
+                item.setPaymentReceiverOperatorPhone(getElement(jsonItem, ORDER_ITEM_PAYMENT_RECEIVER_OPERATOR_PHONE));
+                item.setPaymentAgentOperation(getElement(jsonItem, ORDER_ITEM_PAYMENT_AGENT_OPERATION));
+                item.setPaymentAgentPhone(getElement(jsonItem, ORDER_ITEM_PAYMENT_AGENT_PHONE));
+                item.setSupplierPhone(getElement(jsonItem, ORDER_ITEM_SUPPLIER_PHONE));
+                item.setSupplierName(getElement(jsonItem, ORDER_ITEM_SUPPLIER_NAME));
+                item.setSupplierINN(getElement(jsonItem, ORDER_ITEM_SUPPLIER_INN));
+                item.setExcise(getElement(jsonItem, ORDER_ITEM_EXCISE));
+                item.setCountryOfOrigin(getElement(jsonItem, ORDER_ITEM_COUNTRY_OF_ORIGIN));
+                item.setNumberOfCustomsDeclaration(getElement(jsonItem, ORDER_ITEM_NUMBER_OF_CUSTOMS_DECLARATION));
+                item.setLineAttribute(getElement(jsonItem, ORDER_ITEM_LINE_ATTRIBUTE));
 
-            items.add(item);
+                items.add(item);
+            }
         }
         return items;
     }
 
     private static String getElement(JSONObject obj, String name) {
         try {
-            return obj.getString(name);
+            Iterator<String> iter = obj.keys();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                if (key.equalsIgnoreCase(name)) {
+                    return obj.getString(key);
+                }
+            }
         } catch (JSONException ex) {
             // nothing
         }
