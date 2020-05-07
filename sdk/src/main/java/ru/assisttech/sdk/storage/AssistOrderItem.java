@@ -37,8 +37,7 @@ public class AssistOrderItem {
     private String numberOfCustomsDeclaration;
     private String lineAttribute;
 
-    public AssistOrderItem(String name, String quantity, String price, String amount) {
-        this.name = name;
+    public AssistOrderItem(String quantity, String price, String amount) {
         this.quantity = quantity.replace(",", ".");
         this.price = processMoney(price.replace(",", "."));
         this.amount = processMoney(amount.replace(",", "."));

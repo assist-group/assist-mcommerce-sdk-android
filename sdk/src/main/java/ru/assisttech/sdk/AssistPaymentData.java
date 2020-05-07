@@ -67,7 +67,7 @@ public class AssistPaymentData {
             return;
         }
         try {
-            json = json.replaceAll("\\{\\s*\"items\"\\s*:", "").replaceAll("\\]\\s*\\}", "]");
+            json = json.replaceAll("\\{\\s*\"items\"\\s*:", "").replaceAll("\\]\\s*\\}", "]").replaceAll("[^\\w\\s.,!@#$%^&*\"'{}\\[\\]:()=+~`-]", "").trim();
             orderItems = AssistOrderUtils.fromJsonString(json);
         } catch (Exception e) {
             // nothing

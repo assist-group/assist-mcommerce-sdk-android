@@ -48,14 +48,14 @@ public class AssistOrderUtils {
         for (int i = 0; i < jsonItems.length(); i++) {
             JSONObject jsonItem = jsonItems.getJSONObject(i);
 
-            String name = jsonItem.getString(ORDER_ITEM_NAME);
             String price = jsonItem.getString(ORDER_ITEM_PRICE);
             String quantity = jsonItem.getString(ORDER_ITEM_QUANTITY);
             String amount = jsonItem.getString(ORDER_ITEM_AMOUNT);
 
-            AssistOrderItem item = new AssistOrderItem(name, quantity, price, amount);
+            AssistOrderItem item = new AssistOrderItem(quantity, price, amount);
 
             item.setId(jsonItem.getInt(ORDER_ITEM_ID));
+            item.setName(getElement(jsonItem, ORDER_ITEM_NAME));
             item.setProduct(getElement(jsonItem, ORDER_ITEM_PRODUCT));
             item.setTax(getElement(jsonItem, ORDER_ITEM_TAX));
             item.setFpmode(getElement(jsonItem, ORDER_ITEM_FPMODE));
