@@ -474,8 +474,8 @@ public class AssistPaymentData {
         values.put(FieldName.TaxationSystem, value);
     }
 
-    public void setPrepayment(boolean value) {
-        values.put(FieldName.prepayment, Integer.toString(value ? 1 : 0));
+    public void setPrepayment(String value) {
+        values.put(FieldName.prepayment, value);
     }
 
     public Map<String, String> getFields() {

@@ -177,11 +177,14 @@
             android:text="@string/settings_other"
             android:paddingLeft="8dp"/>
 
-        <CheckBox
-            android:id="@+id/chPrepayment"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Prepayment"/>
+        <EditText
+            android:id="@+id/etPrepayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 </ScrollView>

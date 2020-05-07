@@ -30,7 +30,7 @@ public class SettingsActivity extends UpButtonActivity {
     static String tax;
     static String fpmode;
     static String taxationSystem;
-    static Boolean prepayment;
+    static String prepayment;
 
     private Spinner spLang;
 
@@ -52,7 +52,7 @@ public class SettingsActivity extends UpButtonActivity {
     private EditText etTax;
     private EditText etFPMode;
     private EditText etTaxationSystem;
-    private CheckBox chPrepayment;
+    private EditText etPrepayment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +124,7 @@ public class SettingsActivity extends UpButtonActivity {
         etTax = findViewById(R.id.etTax);
         etFPMode = findViewById(R.id.etFPMode);
         etTaxationSystem = findViewById(R.id.etTaxationSystem);
-        chPrepayment = findViewById(R.id.chPrepayment);
+        etPrepayment = findViewById(R.id.etPrepayment);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
@@ -203,7 +203,7 @@ public class SettingsActivity extends UpButtonActivity {
 
         /* Prepayment */
         if (prepayment != null) {
-            chPrepayment.setChecked(prepayment);
+            etPrepayment.setText(prepayment);
         }
     }
 
@@ -245,6 +245,6 @@ public class SettingsActivity extends UpButtonActivity {
         taxationSystem = etTaxationSystem.getText().toString();
 
         /* Prepayment */
-        prepayment = chPrepayment.isChecked();
+        prepayment = etPrepayment.getText().toString();
     }
 }
