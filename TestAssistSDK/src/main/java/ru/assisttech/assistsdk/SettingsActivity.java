@@ -178,7 +178,7 @@ public class SettingsActivity extends UpButtonActivity {
             etRecMaxAmt.setText(maxAmount);
         }
         if(period != null) {
-            etRecPeriod.setText(period);
+            etRecPeriod.setText("" + period);
         }
         if(maxDate != null) {
             etRecMaxDate.setText(maxDate);
