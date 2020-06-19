@@ -7,10 +7,10 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -320,10 +320,17 @@ public class AssistNetworkEngine {
                 if (request.hasData()) {
                     Log.d(TAG, request.toString());
                     //Send request
+/*
                     DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
                     wr.writeBytes(request.getData());
                     wr.flush();
                     wr.close();
+*/
+                    OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+                    wr.write(request.getData());
+                    wr.flush();
+                    wr.close();
+
                 }
 
                 if (isCancelled()) {
@@ -457,7 +464,8 @@ public class AssistNetworkEngine {
             request.addProperty("Content-Type", "text/xml");
             request.addProperty("Content-Encoding", "UTF-8");
             request.addProperty("SOAPAction", getUrl().toString());
-            request.addProperty("Content-Length", Integer.toString(data.length()));
+//            request.addProperty("Content-Length", Integer.toString(data.length()));
+            request.addProperty("Content-Length", Integer.toString(data.getBytes().length));
             return request;
         }
     }
