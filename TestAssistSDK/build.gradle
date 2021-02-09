@@ -72,8 +72,8 @@ dependencies {
     implementation 'io.card:android-sdk:5.5.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     // Google Wallet
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.google.android.gms:play-services-wallet:18.0.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+    implementation 'com.google.android.gms:play-services-wallet:18.1.2'
 
     implementation 'com.github.mklimek:ssl-utils-android:1.0.1'
 

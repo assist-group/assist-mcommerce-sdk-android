@@ -14,5 +14,6 @@ public class AssistAddress {
 
     public static final String SILENTPAY_SERVICE = "/pay/silentpay.cfm";
     public static final String TOKENPAY_SERVICE = "/pay/tokenpay.cfm";
+    public static final String TOKENPAY_ORDER_SERVICE = "/pay/tokenpay_order.cfm";
     public static final String RECURRENT_URL = "/recurrent/rp.cfm";
 }

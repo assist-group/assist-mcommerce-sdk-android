@@ -1,6 +1,5 @@
 package ru.assisttech.sdk.processor;
 
-
 import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
@@ -25,6 +24,8 @@ import ru.assisttech.sdk.network.HttpResponse;
 public class AssistTokenPayProcessor extends AssistBaseProcessor {
 
     public static final String TAG = AssistTokenPayProcessor.class.getSimpleName();
+
+    private static final String UTF8 = "UTF-8";
 
     String type;
 
@@ -59,54 +60,79 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
         try {
             Map<String, String> params = data.getFields();
 
-            content.append(URLEncoder.encode(FieldName.Merchant_ID, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getID(), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Merchant_ID, UTF8)).append("=");
+            content.append(URLEncoder.encode(m.getID(), UTF8)).append("&");
 
-            content.append(URLEncoder.encode(FieldName.Login, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getLogin(), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Login, UTF8)).append("=");
+            content.append(URLEncoder.encode(m.getLogin(), UTF8)).append("&");
 
-            content.append(URLEncoder.encode(FieldName.Password, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(m.getPassword(), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.Password, UTF8)).append("=");
+            content.append(URLEncoder.encode(m.getPassword(), UTF8)).append("&");
 
-            content.append(URLEncoder.encode(FieldName.OrderNumber, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderNumber), "UTF-8")).append("&");
+            content.append(URLEncoder.encode("TokenType", UTF8)).append("=");
+            content.append(URLEncoder.encode(type, UTF8)).append("&");
 
-            content.append(URLEncoder.encode(FieldName.OrderAmount, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.PaymentToken, UTF8)).append("=");
+            content.append(URLEncoder.encode(params.get(FieldName.PaymentToken), UTF8)).append("&");
 
-            content.append(URLEncoder.encode(FieldName.OrderCurrency, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), "UTF-8")).append("&");
+            if (data.getLink() != null) {
+                content.append(URLEncoder.encode("outcfsid", UTF8)).append("=");
+                final String cfsid = getCFSIDFromLink(data.getLink());
+                content.append(cfsid != null ? URLEncoder.encode(cfsid, UTF8) : "").append("&");
+            } else {
+                content.append(URLEncoder.encode(FieldName.OrderNumber, UTF8)).append("=");
+                content.append(URLEncoder.encode(params.get(FieldName.OrderNumber), UTF8)).append("&");
 
-            if (params.get(FieldName.OrderComment) != null) {
-                content.append(URLEncoder.encode(FieldName.OrderComment, "UTF-8")).append("=");
-                content.append(URLEncoder.encode(params.get(FieldName.OrderComment), "UTF-8")).append("&");
+                content.append(URLEncoder.encode(FieldName.OrderAmount, UTF8)).append("=");
+                content.append(URLEncoder.encode(params.get(FieldName.OrderAmount), UTF8)).append("&");
+
+                content.append(URLEncoder.encode(FieldName.OrderCurrency, UTF8)).append("=");
+                content.append(URLEncoder.encode(params.get(FieldName.OrderCurrency), UTF8)).append("&");
+
+                if (params.get(FieldName.OrderComment) != null) {
+                    content.append(URLEncoder.encode(FieldName.OrderComment, UTF8)).append("=");
+                    content.append(URLEncoder.encode(params.get(FieldName.OrderComment), UTF8)).append("&");
+                }
+
+                content.append(URLEncoder.encode(FieldName.Lastname, UTF8)).append("=");
+                content.append(URLEncoder.encode(params.get(FieldName.Lastname), UTF8)).append("&");
+
+                content.append(URLEncoder.encode(FieldName.Firstname, UTF8)).append("=");
+                content.append(URLEncoder.encode(params.get(FieldName.Firstname), UTF8)).append("&");
+
+                content.append(URLEncoder.encode(FieldName.Email, UTF8)).append("=");
+                content.append(URLEncoder.encode(params.get(FieldName.Email), UTF8)).append("&");
             }
 
-            content.append(URLEncoder.encode("TokenType", "UTF-8")).append("=");
-            content.append(URLEncoder.encode(type, "UTF-8")).append("&");
+            content.append(URLEncoder.encode(FieldName.ClientIP, UTF8)).append("=");
+            if (params.get(FieldName.ClientIP) != null) {
+                content.append(URLEncoder.encode(params.get(FieldName.ClientIP), UTF8)).append("&");
+            } else {
+                content.append(URLEncoder.encode("127.0.0.1", UTF8)).append("&");
+            }
 
-            content.append(URLEncoder.encode(FieldName.PaymentToken, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.PaymentToken), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.Lastname, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Lastname), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.Firstname, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Firstname), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.Email, "UTF-8")).append("=");
-            content.append(URLEncoder.encode(params.get(FieldName.Email), "UTF-8")).append("&");
-
-            content.append(URLEncoder.encode(FieldName.Format, "UTF-8")).append("=");
-            content.append(URLEncoder.encode("4", "UTF-8"));
+            content.append(URLEncoder.encode(FieldName.Format, UTF8)).append("=");
+            content.append(URLEncoder.encode("4", UTF8));
 
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Encoding error", e);
         }
 
         Log.d(TAG, "Request:" + content.toString());
 
         return content.toString();
+    }
+
+    private static String getCFSIDFromLink(String link) {
+        try {
+            String cfsid = link.split("CFSID=")[1].split("&")[0];
+            if (cfsid != null && cfsid.matches("[\\w]{24}")) {
+                return cfsid;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Link parsing error. Check your CFSID");
+        }
+        return null;
     }
 
     private class TokenPayResponseParser implements AssistNetworkEngine.NetworkResponseProcessor {
@@ -204,7 +230,8 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
                 }
             } else {
                 AssistResult result = new AssistResult();
-                if (!responseFields.get(testField).isEmpty()) {
+                final String tf = responseFields.get(testField);
+                if (tf == null || !tf.isEmpty()) {
                     /* Success */
                     result.setApprovalCode(responseFields.get("approvalcode"));
                     result.setBillNumber(responseFields.get("billnumber"));

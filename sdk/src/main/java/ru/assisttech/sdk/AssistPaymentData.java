@@ -16,6 +16,7 @@ public class AssistPaymentData {
     private String password;
     private PrivateKey privateKey;
     private List<AssistOrderItem> orderItems;
+    private String link;
 
     public AssistPaymentData() {
         values = new HashMap<>();
@@ -378,6 +379,14 @@ public class AssistPaymentData {
         return privateKey;
     }
 
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
     public void setTaxpayerID(String value) {
         values.put(FieldName.TaxpayerID, value);
     }
@@ -693,7 +702,7 @@ public class AssistPaymentData {
         }
 
         public boolean equals(String value) {
-            return id == Integer.valueOf(value);
+            return id == Integer.parseInt(value);
         }
     }
 }

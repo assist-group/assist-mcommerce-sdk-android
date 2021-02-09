@@ -5,10 +5,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import ru.assisttech.sdk.AssistAddress;
 import ru.assisttech.sdk.AssistMerchant;
@@ -46,14 +49,14 @@ public class AssistPayEngine {
 
     private String ServerUrl = AssistAddress.DEFAULT_SERVER;
 
-    private Context appContext;
+    private final Context appContext;
     private Activity callerActivity;
 
-    private InstallationInfo instInfo;
-    private AssistNetworkEngine netEngine;
+    private final InstallationInfo instInfo;
+    private final AssistNetworkEngine netEngine;
 
     protected AssistBaseProcessor processor;
-    private AssistTransactionStorage storage;
+    private final AssistTransactionStorage storage;
 
     private PayEngineListener engineListener;
 
@@ -143,20 +146,28 @@ public class AssistPayEngine {
             AssistPaymentData data = environment.getData();
             data.setMobileDevice("5");  // Tells Assist server what web pages to show
 
-            AssistTransaction t = createTransaction(
-                    data.getMerchantID(),
-                    data,
-                    useCamera ? AssistTransaction.PaymentMethod.CARD_PHOTO_SCAN :
-                            AssistTransaction.PaymentMethod.CARD_MANUAL
-            );
+            String link = data.getLink();
+            if (link != null && !(Patterns.WEB_URL.matcher(link).matches() && link.startsWith(getServerUrl()))) {
+                link = null;
+            }
+            if (link == null) {
+                AssistTransaction t = createTransaction(
+                        data.getMerchantID(),
+                        data,
+                        useCamera ? AssistTransaction.PaymentMethod.CARD_PHOTO_SCAN :
+                                AssistTransaction.PaymentMethod.CARD_MANUAL
+                );
 
-            processor = new AssistWebProcessor(getContext(), environment, useCamera);
-            processor.setNetEngine(netEngine);
-            processor.setURL(getWebServiceUrl());
-            processor.setListener(new WebProcessorListener());
-            processor.setTransaction(t);
+                processor = new AssistWebProcessor(getContext(), environment, useCamera);
+                processor.setNetEngine(netEngine);
+                processor.setURL(getWebServiceUrl());
+                processor.setListener(new WebProcessorListener());
+                processor.setTransaction(t);
 
-            checkRegistration();
+                checkRegistration();
+            } else {
+                getResult(environment, useCamera);
+            }
         }
     }
 
@@ -175,19 +186,27 @@ public class AssistPayEngine {
 
             AssistPaymentData data = environment.getData();
 
-            AssistTransaction t = createTransaction(
-                    data.getMerchantID(),
-                    data,
-                    CARD_TERMINAL
-            );
+            String link = data.getLink();
+            if (link != null && !(Patterns.WEB_URL.matcher(link).matches() && link.startsWith(getServerUrl()))) {
+                link = null;
+            }
+            if (link == null) {
+                AssistTransaction t = createTransaction(
+                        data.getMerchantID(),
+                        data,
+                        CARD_TERMINAL
+                );
 
-            processor = new AssistTokenPayProcessor(getContext(), environment, type.toString());
-            processor.setNetEngine(netEngine);
-            processor.setURL(getTokenPayeServiceUrl());
-            processor.setListener(new TokenPayProcessorListener());
-            processor.setTransaction(t);
+                processor = new AssistTokenPayProcessor(getContext(), environment, type.toString());
+                processor.setNetEngine(netEngine);
+                processor.setURL(getTokenPayServiceUrl());
+                processor.setListener(new TokenPayProcessorListener());
+                processor.setTransaction(t);
 
-            checkRegistration();
+                checkRegistration();
+            } else {
+                getResult(environment, type.toString());
+            }
         }
     }
 
@@ -379,6 +398,50 @@ public class AssistPayEngine {
         startProcessor();
     }
 
+    private void getResult(AssistProcessorEnvironment environment, boolean useCamera) {
+        processor = getResultProcessor();
+        processor.setNetEngine(netEngine);
+        processor.setURL(getGetOrderStatusUrl());
+
+        AssistPaymentData data = environment.getData();
+        final String orderNumber = data.getFields().get(FieldName.OrderNumber);
+        if (orderNumber != null && !orderNumber.isEmpty()) {
+            AssistTransaction t = createTransaction(data.getMerchantID(), data, null);
+            t.setOrderDateUTC(new SimpleDateFormat("dd.MM.yyyy", Locale.US).format(System.currentTimeMillis()));
+
+            processor.setListener(new ResultProcessorListener(environment, useCamera));
+            processor.setTransaction(t);
+
+            checkRegistration();
+        } else {
+            String msg = "OrderNumber is empty";
+            Log.e(TAG, msg);
+            getEngineListener().onFailure(getCallerActivity(), msg);
+        }
+    }
+
+    private void getResult(AssistProcessorEnvironment environment, String tokenType) {
+        processor = getResultProcessor();
+        processor.setNetEngine(netEngine);
+        processor.setURL(getGetOrderStatusUrl());
+
+        AssistPaymentData data = environment.getData();
+        final String orderNumber = data.getFields().get(FieldName.OrderNumber);
+        if (orderNumber != null && !orderNumber.isEmpty()) {
+            AssistTransaction t = createTransaction(data.getMerchantID(), data, null);
+            t.setOrderDateUTC(new SimpleDateFormat("dd.MM.yyyy", Locale.US).format(System.currentTimeMillis()));
+
+            processor.setListener(new ResultProcessorListener(environment, tokenType));
+            processor.setTransaction(t);
+
+            checkRegistration();
+        } else {
+            String msg = "OrderNumber is empty";
+            Log.e(TAG, msg);
+            getEngineListener().onFailure(getCallerActivity(), msg);
+        }
+    }
+
     /**
      * Internal method to get payment result after payment process completion.
      * Does not check application registration
@@ -428,7 +491,6 @@ public class AssistPayEngine {
         storage.updateTransactionResult(id, result);
     }
 
-
     private void engineInitializationFailed(String info) {
         processor = null;
         if (!isFinished()) {
@@ -452,8 +514,12 @@ public class AssistPayEngine {
         return getServerUrl() + AssistAddress.WEB_SERVICE;
     }
 
-    private String getTokenPayeServiceUrl() {
+    private String getTokenPayServiceUrl() {
         return getServerUrl() + AssistAddress.TOKENPAY_SERVICE;
+    }
+
+    private String getTokenPayOrderServiceUrl() {
+        return getServerUrl() + AssistAddress.TOKENPAY_ORDER_SERVICE;
     }
 
     private String getRecurrentUrl() {
@@ -613,17 +679,86 @@ public class AssistPayEngine {
      */
     private class ResultProcessorListener extends BaseProcessorListener {
 
+        private final AssistProcessorEnvironment environment;
+        private final boolean useCamera;
+        private final String tokenType;
+
+        ResultProcessorListener() {
+            environment = null;
+            useCamera = false;
+            tokenType = null;
+        }
+
+        ResultProcessorListener(AssistProcessorEnvironment environment, boolean useCamera) {
+            this.environment = environment;
+            this.useCamera = useCamera;
+            this.tokenType = null;
+
+        }
+
+        ResultProcessorListener(AssistProcessorEnvironment environment, String tokenType) {
+            this.environment = environment;
+            this.useCamera = false;
+            this.tokenType = tokenType;
+        }
+
         @Override
         public void onFinished(long id, AssistResult result) {
             Log.d(TAG, "ResultProcessorListener.onFinished() " + result.getOrderState());
-            updateTransaction(id, result);
-            getEngineListener().onFinished(getCallerActivity(), getTransaction(id));
+            if (environment != null) {
+                AssistPaymentData data = updateFields(result);
+
+                if (tokenType != null) {
+                    AssistTransaction t = createTransaction(
+                            data.getMerchantID(),
+                            data,
+                            CARD_TERMINAL
+                    );
+
+                    processor = new AssistTokenPayProcessor(getContext(), environment, tokenType);
+                    processor.setNetEngine(netEngine);
+                    processor.setURL(getTokenPayOrderServiceUrl());
+                    processor.setListener(new TokenPayProcessorListener());
+                    processor.setTransaction(t);
+                } else {
+                    AssistTransaction t = createTransaction(
+                            data.getMerchantID(),
+                            data,
+                            useCamera ? AssistTransaction.PaymentMethod.CARD_PHOTO_SCAN :
+                                    AssistTransaction.PaymentMethod.CARD_MANUAL
+                    );
+
+                    processor = new AssistWebProcessor(getContext(), environment, useCamera);
+                    processor.setNetEngine(netEngine);
+                    processor.setURL(data.getLink());
+                    processor.setListener(new WebProcessorListener());
+                    processor.setTransaction(t);
+                }
+
+                checkRegistration();
+            } else {
+                updateTransaction(id, result);
+                getEngineListener().onFinished(getCallerActivity(), getTransaction(id));
+            }
         }
 
         @Override
         public void onError(long id, String message) {
             Log.d(TAG, "ResultProcessorListener.onError() " + message);
             getEngineListener().onFailure(getCallerActivity(), message);
+        }
+
+        private AssistPaymentData updateFields(final AssistResult result) {
+            AssistPaymentData data = environment.getData();
+            if (data != null) {
+                data.setOrderNumber(result.getOrderNumber());
+                data.setOrderAmount(result.getAmount());
+                if (result.getCurrency() != null) {
+                    data.setOrderCurrency(AssistPaymentData.Currency.valueOf(result.getCurrency()));
+                }
+                data.setOrderComment(result.getComment());
+            }
+            return data;
         }
     }
 

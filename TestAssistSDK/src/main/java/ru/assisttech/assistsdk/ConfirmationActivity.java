@@ -1,6 +1,5 @@
 package ru.assisttech.assistsdk;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -95,6 +94,7 @@ public class ConfirmationActivity extends FragmentActivity {
             TextView tvOrderNumber = findViewById(R.id.tvOrderNumber);
             TextView tvOrderAmount = findViewById(R.id.tvOrderAmount);
             TextView tvOrderComment = findViewById(R.id.tvOrderComment);
+            TextView tvLink = findViewById(R.id.tvLink);
 
             tvServer.setText(configuration.getServer());
 
@@ -106,14 +106,21 @@ public class ConfirmationActivity extends FragmentActivity {
                     )
             );
             tvOrderNumber.setText(data.getFields().get(FieldName.OrderNumber));
-            tvOrderAmount.setText(
-                    String.format(
-                            Locale.getDefault(),
-                            "%1$s %2$s",
-                            data.getFields().get(FieldName.OrderAmount), data.getFields().get(FieldName.OrderCurrency)
-                    )
-            );
-            tvOrderComment.setText(data.getFields().get(FieldName.OrderComment));
+            if (data.getLink() == null) {
+                tvOrderAmount.setText(
+                        String.format(
+                                Locale.getDefault(),
+                                "%1$s %2$s",
+                                data.getFields().get(FieldName.OrderAmount), data.getFields().get(FieldName.OrderCurrency)
+                        )
+                );
+                tvOrderComment.setText(data.getFields().get(FieldName.OrderComment));
+                findViewById(R.id.llLink).setVisibility(View.GONE);
+            } else {
+                tvLink.setText(data.getLink());
+                findViewById(R.id.llOrderAmount).setVisibility(View.GONE);
+                findViewById(R.id.llOrderComment).setVisibility(View.GONE);
+            }
 
             Button btPayWeb = findViewById(R.id.btPay);
             btPayWeb.setOnClickListener(new View.OnClickListener() {

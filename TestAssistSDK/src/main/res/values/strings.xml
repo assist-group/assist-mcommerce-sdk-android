@@ -61,6 +61,7 @@
     <string name="default_comment">test payment</string>
     <string name="customer_number_label">Номер покупателя:</string>
     <string name="signature_label">Подпись данных заказа:</string>
+    <string name="link_label">Ссылка на существующий заказ:</string>
     <string name="use_camera_cb_label">Сканировать карту</string>
     <string name="pay_btn_text">Оплатить</string>
     <string name="pay_web_btn_text">WEB Оплата</string>

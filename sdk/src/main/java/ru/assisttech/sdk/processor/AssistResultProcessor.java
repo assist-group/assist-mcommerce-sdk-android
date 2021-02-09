@@ -122,6 +122,16 @@ public class AssistResultProcessor extends AssistBaseProcessor {
                 if (orderResult != null && orderResult.getOrder() != null) {
                     result.setOrderState(orderResult.getOrder().orderstate);
                     result.setBillNumber(orderResult.getOrder().billnumber);
+                    result.setOrderNumber(orderResult.getOrder().ordernumber);
+                    result.setSignature(orderResult.getOrder().signature);
+                    result.setCheckValue(orderResult.getOrder().checkvalue);
+                    result.setComment(orderResult.getOrder().ordercomment);
+                    result.setAmount(orderResult.getOrder().orderamount);
+                    result.setCurrency(orderResult.getOrder().ordercurrency);
+                    result.setFirstName(orderResult.getOrder().firstname);
+                    result.setLastName(orderResult.getOrder().lastname);
+                    result.setMiddleName(orderResult.getOrder().middlename);
+                    result.setEmail(orderResult.getOrder().email);
                     if (orderResult.getOrder().getLastOperation() != null) {
                         result.setExtra(orderResult.getOrder().getLastOperation().usermessage);
                         result.setCardholder(orderResult.getOrder().getLastOperation().cardholder);
@@ -173,6 +183,15 @@ public class AssistResultProcessor extends AssistBaseProcessor {
         String ordernumber;
         String billnumber;
         String orderstate;
+        String email;
+        String checkvalue;
+        String signature;
+        String orderamount;
+        String ordercurrency;
+        String ordercomment;
+        String firstname;
+        String lastname;
+        String middlename;
         ArrayList<Operation> operations = new ArrayList<>();
 
         Order(XmlPullParser parser) throws XmlPullParserException, IOException {
@@ -187,6 +206,33 @@ public class AssistResultProcessor extends AssistBaseProcessor {
                             break;
                         case "orderstate":
                             orderstate = XmlHelper.readValue(parser, "orderstate");
+                            break;
+                        case "email":
+                            email = XmlHelper.readValue(parser, "email");
+                            break;
+                        case "checkvalue":
+                            checkvalue = XmlHelper.readValue(parser, "checkvalue");
+                            break;
+                        case "signature":
+                            signature = XmlHelper.readValue(parser, "signature");
+                            break;
+                        case "orderamount":
+                            orderamount = XmlHelper.readValue(parser, "orderamount");
+                            break;
+                        case "ordercurrency":
+                            ordercurrency = XmlHelper.readValue(parser, "ordercurrency");
+                            break;
+                        case "ordercomment":
+                            ordercomment = XmlHelper.readValue(parser, "ordercomment");
+                            break;
+                        case "firstname":
+                            firstname = XmlHelper.readValue(parser, "firstname");
+                            break;
+                        case "lastname":
+                            lastname = XmlHelper.readValue(parser, "lastname");
+                            break;
+                        case "middlename":
+                            middlename = XmlHelper.readValue(parser, "middlename");
                             break;
                         case Operation.TAG:
                             operations.add(new Operation(parser));

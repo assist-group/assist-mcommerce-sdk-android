@@ -51,29 +51,62 @@
                 android:layout_height="1px"
                 android:background="@android:color/darker_gray" />
 
-            <TextView
-                android:id="@+id/tvOrderAmount"
+            <LinearLayout
+                android:id="@+id/llOrderAmount"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/confirm_activity_field_height"
-                android:gravity="center_vertical"
-                tools:text="100 RUB"/>
+                android:layout_height="wrap_content">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@android:color/darker_gray" />
+                <TextView
+                    android:id="@+id/tvOrderAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/confirm_activity_field_height"
+                    android:gravity="center_vertical"
+                    tools:text="100 RUB"/>
 
-            <TextView
-                android:id="@+id/tvOrderComment"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/confirm_activity_field_height"
-                android:gravity="center_vertical"
-                tools:text="comment"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
 
-            <View
+            <LinearLayout
+                android:id="@+id/llOrderComment"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@android:color/darker_gray" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvOrderComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/confirm_activity_field_height"
+                    android:gravity="center_vertical"
+                    tools:text="comment"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llLink"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:gravity="center_vertical"
+                    tools:text="link"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

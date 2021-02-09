@@ -67,10 +67,11 @@ public class MainActivity extends FragmentActivity {
     private LinearLayout viewItems;
     private TextView tvItems;
 
+    private EditText etLink;
+
     protected ApplicationConfiguration configuration;
     private AssistPayEngine engine;
     protected AssistPaymentData data;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +107,8 @@ public class MainActivity extends FragmentActivity {
         etPassword.setText(DEFAULT_PASSWORD);
 
         tvItems.setText(DEFAULT_ITEMS);
+
+        etLink = findViewById(R.id.etLink);
 
         btLog = findViewById(R.id.btLog);
 
@@ -227,6 +230,11 @@ public class MainActivity extends FragmentActivity {
         data.setCustomerNumber(etCustomerNumber.getText().toString());
         if (etSignature.getText().length() > 0) {
             data.setSignature(etSignature.getText().toString());
+        }
+        if (etLink.getText().length() > 0) {
+            data.setLink(etLink.getText().toString());
+        } else {
+            data.setLink(null);
         }
 
         CustomerActivity.setContactData(data);
