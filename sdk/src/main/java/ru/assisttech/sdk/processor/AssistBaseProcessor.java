@@ -74,7 +74,6 @@ public abstract class AssistBaseProcessor {
     public void start(Activity caller) {
         callerActivity = caller;
         run();
-        setRunning(true);
     }
 
     public void stop() {
@@ -87,7 +86,9 @@ public abstract class AssistBaseProcessor {
         return isRunning;
     }
 
-    protected abstract void run();
+    protected void run() {
+        setRunning(true);
+    };
 
     protected abstract void terminate();
 

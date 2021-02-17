@@ -33,6 +33,7 @@ public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
+        super.run();
         /*
          * Manual card data input
          */

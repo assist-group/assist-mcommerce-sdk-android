@@ -30,6 +30,8 @@ public class AssistResultProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
+        super.run();
+
         String request = buildRequest();
 
         Log.d(TAG, "Request: " + request);

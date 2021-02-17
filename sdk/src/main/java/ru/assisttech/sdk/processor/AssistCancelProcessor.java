@@ -24,6 +24,7 @@ public class AssistCancelProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
+        super.run();
 
         AssistMerchant m = getEnvironment().getMerchant();
         String request = buildRequest(m.getID(),

@@ -38,7 +38,9 @@ import ru.assisttech.sdk.storage.AssistTransaction;
 import ru.assisttech.sdk.storage.AssistTransactionStorage;
 import ru.assisttech.sdk.storage.AssistTransactionStorageImpl;
 
+import static ru.assisttech.sdk.storage.AssistTransaction.PaymentMethod.CARD_MANUAL;
 import static ru.assisttech.sdk.storage.AssistTransaction.PaymentMethod.CARD_TERMINAL;
+import static ru.assisttech.sdk.storage.AssistTransaction.PaymentMethod.CARD_PHOTO_SCAN;
 
 /**
  * Initiates payment process, checks connection and registration
@@ -291,9 +293,24 @@ public class AssistPayEngine {
         }
     }
 
+    public void getAmountForOrder(Activity caller, AssistPaymentData data) {
+        if (isEngineReady()) {
+            saveCallerActivity(caller);
+            setFinished(false);
+
+            if (data.getFields().get(FieldName.OrderAmount) == null) {
+                data.setOrderAmount("1");
+            }
+            if (data.getFields().get(FieldName.OrderCurrency) == null) {
+                data.setOrderCurrency(AssistPaymentData.Currency.RUB);
+            }
+            getResult(buildServiceEnvironment(data), new SimpleResultProcessorListener());
+        }
+    }
+
     public void stopPayment(Activity caller) {
         setFinished(true);
-        if ((processor != null) && (processor.isRunning())) {
+        if (processor != null && processor.isRunning()) {
             processor.stop();
             getEngineListener().onCanceled(caller, processor.getTransaction());
             processor = null;
@@ -398,7 +415,7 @@ public class AssistPayEngine {
         startProcessor();
     }
 
-    private void getResult(AssistProcessorEnvironment environment, boolean useCamera) {
+    private void getResult(AssistProcessorEnvironment environment, BaseProcessorListener listener, boolean useCamera, String tokenType) {
         processor = getResultProcessor();
         processor.setNetEngine(netEngine);
         processor.setURL(getGetOrderStatusUrl());
@@ -406,10 +423,19 @@ public class AssistPayEngine {
         AssistPaymentData data = environment.getData();
         final String orderNumber = data.getFields().get(FieldName.OrderNumber);
         if (orderNumber != null && !orderNumber.isEmpty()) {
-            AssistTransaction t = createTransaction(data.getMerchantID(), data, null);
+            AssistTransaction t = createTransaction(
+                    data.getMerchantID(),
+                    data,
+                    tokenType != null ? CARD_TERMINAL : useCamera ? CARD_PHOTO_SCAN : CARD_MANUAL);
             t.setOrderDateUTC(new SimpleDateFormat("dd.MM.yyyy", Locale.US).format(System.currentTimeMillis()));
 
-            processor.setListener(new ResultProcessorListener(environment, useCamera));
+            BaseProcessorListener bpListener = new ResultProcessorListener(environment, useCamera);
+            if (listener != null) {
+                bpListener = listener;
+            } else if (tokenType != null) {
+                bpListener = new ResultProcessorListener(environment, tokenType);
+            }
+            processor.setListener(bpListener);
             processor.setTransaction(t);
 
             checkRegistration();
@@ -420,26 +446,54 @@ public class AssistPayEngine {
         }
     }
 
+    private void getResult(AssistProcessorEnvironment environment, BaseProcessorListener listener) {
+        getResult(environment, listener, false, null);
+    }
+
+    private void getResult(AssistProcessorEnvironment environment, boolean useCamera) {
+        getResult(environment, null, useCamera, null);
+//        processor = getResultProcessor();
+//        processor.setNetEngine(netEngine);
+//        processor.setURL(getGetOrderStatusUrl());
+//
+//        AssistPaymentData data = environment.getData();
+//        final String orderNumber = data.getFields().get(FieldName.OrderNumber);
+//        if (orderNumber != null && !orderNumber.isEmpty()) {
+//            AssistTransaction t = createTransaction(data.getMerchantID(), data, useCamera ? CARD_PHOTO_SCAN : CARD_MANUAL);
+//            t.setOrderDateUTC(new SimpleDateFormat("dd.MM.yyyy", Locale.US).format(System.currentTimeMillis()));
+//
+//            processor.setListener(new ResultProcessorListener(environment, useCamera));
+//            processor.setTransaction(t);
+//
+//            checkRegistration();
+//        } else {
+//            String msg = "OrderNumber is empty";
+//            Log.e(TAG, msg);
+//            getEngineListener().onFailure(getCallerActivity(), msg);
+//        }
+    }
+
     private void getResult(AssistProcessorEnvironment environment, String tokenType) {
-        processor = getResultProcessor();
-        processor.setNetEngine(netEngine);
-        processor.setURL(getGetOrderStatusUrl());
-
-        AssistPaymentData data = environment.getData();
-        final String orderNumber = data.getFields().get(FieldName.OrderNumber);
-        if (orderNumber != null && !orderNumber.isEmpty()) {
-            AssistTransaction t = createTransaction(data.getMerchantID(), data, null);
-            t.setOrderDateUTC(new SimpleDateFormat("dd.MM.yyyy", Locale.US).format(System.currentTimeMillis()));
-
-            processor.setListener(new ResultProcessorListener(environment, tokenType));
-            processor.setTransaction(t);
-
-            checkRegistration();
-        } else {
-            String msg = "OrderNumber is empty";
-            Log.e(TAG, msg);
-            getEngineListener().onFailure(getCallerActivity(), msg);
-        }
+        getResult(environment, null, false, tokenType);
+//        processor = getResultProcessor();
+//        processor.setNetEngine(netEngine);
+//        processor.setURL(getGetOrderStatusUrl());
+//
+//        AssistPaymentData data = environment.getData();
+//        final String orderNumber = data.getFields().get(FieldName.OrderNumber);
+//        if (orderNumber != null && !orderNumber.isEmpty()) {
+//            AssistTransaction t = createTransaction(data.getMerchantID(), data, CARD_TERMINAL);
+//            t.setOrderDateUTC(new SimpleDateFormat("dd.MM.yyyy", Locale.US).format(System.currentTimeMillis()));
+//
+//            processor.setListener(new ResultProcessorListener(environment, tokenType));
+//            processor.setTransaction(t);
+//
+//            checkRegistration();
+//        } else {
+//            String msg = "OrderNumber is empty";
+//            Log.e(TAG, msg);
+//            getEngineListener().onFailure(getCallerActivity(), msg);
+//        }
     }
 
     /**
@@ -670,6 +724,30 @@ public class AssistPayEngine {
         public void onError(long id, String message) {
             Log.d(TAG, "WebProcessorListener.onError() " + message);
             transactionStorage().deleteTransaction(id);
+            getEngineListener().onFailure(getCallerActivity(), message);
+        }
+    }
+
+    /**
+     * Слушатель результата вызова сервиса запроса статуса заказа. {@link AssistResultProcessor}
+     * Только сумма и валюта - минимальная информация для получения токена.
+     */
+    private class SimpleResultProcessorListener extends BaseProcessorListener {
+        @Override
+        public void onFinished(long id, AssistResult result) {
+            Log.d(TAG, "SimpleResultProcessorListener.onFinished() " + result.getOrderState());
+            AssistTransaction t = null;
+            if (result.getAmount() != null) {
+                t = new AssistTransaction();
+                t.setOrderAmount(result.getAmount());
+                t.setOrderCurrency(AssistPaymentData.Currency.valueOf(result.getCurrency()));
+            }
+            getEngineListener().onFinished(getCallerActivity(), t);
+        }
+
+        @Override
+        public void onError(long id, String message) {
+            Log.d(TAG, "SimpleResultProcessorListener.onError() " + message);
             getEngineListener().onFailure(getCallerActivity(), message);
         }
     }

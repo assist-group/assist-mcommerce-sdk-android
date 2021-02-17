@@ -123,6 +123,8 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
+        super.run();
+
         WebViewActivity.setIgnoreSslErrors(getNetEngine().isCustomSslCertificateUsed());
         getCaller().startActivity(new Intent(getCaller(), WebViewActivity.class));
     }

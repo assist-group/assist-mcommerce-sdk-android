@@ -24,6 +24,8 @@ public class AssistDeclineByNumberProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
+        super.run();
+
         listener = new NetworkConnectionErrorListener();
 
         AssistMerchant m = getEnvironment().getMerchant();

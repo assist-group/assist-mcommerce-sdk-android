@@ -20,6 +20,7 @@ import ru.assisttech.sdk.AssistResult;
 import ru.assisttech.sdk.FieldName;
 import ru.assisttech.sdk.network.AssistNetworkEngine;
 import ru.assisttech.sdk.network.HttpResponse;
+import ru.assisttech.sdk.storage.AssistTransaction;
 
 public class AssistTokenPayProcessor extends AssistBaseProcessor {
 
@@ -36,11 +37,19 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
-        getNetEngine().postRequest(getURL(),
-                new NetworkConnectionErrorListener(),
-                new TokenPayResponseParser(),
-                buildRequest()
-        );
+        super.run();
+        try {
+            getNetEngine().postRequest(getURL(),
+                    new NetworkConnectionErrorListener(),
+                    new TokenPayResponseParser(),
+                    buildRequest()
+            );
+        } catch (Exception e) {
+            if (hasListener()) {
+                getListener().onError(AssistTransaction.UNREGISTERED_ID, e.getMessage());
+            }
+            finish();
+        }
     }
 
     @Override
@@ -51,7 +60,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
     /**
      * Web request assembling (HTTP protocol, URL encoded pairs)
      */
-    String buildRequest() {
+    String buildRequest() throws Exception {
 
         AssistPaymentData data = getEnvironment().getData();
         AssistMerchant m = getEnvironment().getMerchant();
@@ -123,16 +132,13 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
         return content.toString();
     }
 
-    private static String getCFSIDFromLink(String link) {
-        try {
-            String cfsid = link.split("CFSID=")[1].split("&")[0];
-            if (cfsid != null && cfsid.matches("[\\w]{24}")) {
-                return cfsid;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Link parsing error. Check your CFSID");
+    private static String getCFSIDFromLink(String link) throws Exception {
+        String cfsid = link.split("CFSID=")[1].split("&")[0];
+        if (cfsid != null && cfsid.matches("[\\w]{24}")) {
+            return cfsid;
         }
-        return null;
+        Log.e(TAG, "Link parsing error. Check your CFSID");
+        throw new Exception("Link parsing error. Check your CFSID");
     }
 
     private class TokenPayResponseParser implements AssistNetworkEngine.NetworkResponseProcessor {

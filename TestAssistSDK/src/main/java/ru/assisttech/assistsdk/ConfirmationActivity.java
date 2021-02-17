@@ -173,7 +173,7 @@ public class ConfirmationActivity extends FragmentActivity {
                                         new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                requestPayment(view);
+                                                getOrderData(data.getFields().get(FieldName.OrderNumber));
                                             }
                                         });
                                 btGooglePay.setVisibility(View.VISIBLE);
@@ -276,10 +276,8 @@ public class ConfirmationActivity extends FragmentActivity {
 
     /**
      * Display the Google Pay payment sheet after interaction with the Google Pay payment button
-     *
-     * @param view optionally uniquely identify the interactive element prompting for payment
      */
-    public void requestPayment(View view) {
+    public void requestPayment() {
         Optional<JSONObject> paymentDataRequestJson =
                 GooglePay.getPaymentDataRequest(
                         "Example Merchant",
@@ -330,7 +328,19 @@ public class ConfirmationActivity extends FragmentActivity {
         }
     }
 
+    private void getOrderData(String orderNumber) {
+        Log.d(TAG, "Get data for orderNumber=" + orderNumber);
+        data.setOrderNumber(orderNumber);
+        engine.setEngineListener(new OrderDataListener());
+        showProgress(getString(R.string.please_wait));
+        engine.getAmountForOrder(this, data);
+    }
+
     private void showAlertDialog(Activity activity, String dlgTitle, String dlgMessage) {
+        showAlertDialog(activity, dlgTitle, dlgMessage, false);
+    }
+
+    private void showAlertDialog(Activity activity, String dlgTitle, String dlgMessage, final boolean finish) {
         Log.d(TAG, "Show alert: " + dlgTitle);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(dlgTitle);
@@ -339,6 +349,9 @@ public class ConfirmationActivity extends FragmentActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                if (finish) {
+                    finish();
+                }
             }
         });
         builder.show();
@@ -376,13 +389,38 @@ public class ConfirmationActivity extends FragmentActivity {
         public void onFinished(Activity activity, AssistTransaction assistTransaction) {
             hideProgress();
             Intent intent = new Intent(ConfirmationActivity.this, ViewResultActivity.class);
-            intent.putExtra(ViewResultActivity.TRANSACTION_ID_EXTRA, assistTransaction.getId());
+            intent.putExtra(ViewResultActivity.TRANSACTION_ID_EXTRA, assistTransaction != null ? assistTransaction.getId() : -1);
             startActivity(intent);
         }
         @Override
         public void onCanceled(Activity activity, AssistTransaction assistTransaction) {
             hideProgress();
+        }
+        @Override
+        public void onFailure(Activity activity, String info) {
+            hideProgress();
+            showAlertDialog(activity, getString(R.string.alert_dlg_title_error), info, true);
+        }
+        @Override
+        public void onNetworkError(Activity activity, String message) {
+            hideProgress();
+            showAlertDialog(activity, getString(R.string.alert_dlg_title_network_error), message);
+        }
+    }
 
+    private class OrderDataListener implements PayEngineListener {
+        @Override
+        public void onFinished(Activity activity, AssistTransaction t) {
+            hideProgress();
+            if (t != null) {
+                data.setOrderAmount(t.getOrderAmount());
+                data.setOrderCurrency(t.getOrderCurrency());
+            }
+            requestPayment();
+        }
+        @Override
+        public void onCanceled(Activity activity, AssistTransaction t) {
+            hideProgress();
         }
         @Override
         public void onFailure(Activity activity, String info) {

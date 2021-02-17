@@ -32,6 +32,8 @@ public class AssistSilentpayProcessor extends AssistBaseProcessor {
 
     @Override
     protected void run() {
+        super.run();
+
         /*
          * Manual card data input
          */
