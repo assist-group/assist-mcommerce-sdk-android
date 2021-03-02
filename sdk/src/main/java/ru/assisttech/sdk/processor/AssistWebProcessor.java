@@ -169,9 +169,12 @@ public class AssistWebProcessor extends AssistBaseProcessor {
             for (Entry<String, String> item : params.entrySet()) {
                 // Parameters to exclude from authorization request
                 Log.d(TAG, item.getKey() + ": " + item.getValue());
-                if (!item.getKey().equals(FieldName.Shop)) {
+                if (!FieldName.Shop.equals(item.getKey())) {
                     content.append(URLEncoder.encode(item.getKey(), "UTF-8")).append("=");
-                    content.append(URLEncoder.encode(item.getValue(), "UTF-8")).append("&");
+                    if (item.getValue() != null) {
+                        content.append(URLEncoder.encode(item.getValue(), "UTF-8"));
+                    }
+                    content.append("&");
                 }
                 signBuilder.addField(item.getKey(), item.getValue());
             }

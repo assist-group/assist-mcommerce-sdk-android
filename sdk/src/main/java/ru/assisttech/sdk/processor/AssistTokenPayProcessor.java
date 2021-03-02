@@ -10,6 +10,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +88,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
             if (data.getLink() != null) {
                 content.append(URLEncoder.encode("outcfsid", UTF8)).append("=");
                 final String cfsid = getCFSIDFromLink(data.getLink());
-                content.append(cfsid != null ? URLEncoder.encode(cfsid, UTF8) : "").append("&");
+                content.append(URLEncoder.encode(URLEncoder.encode(cfsid, UTF8), UTF8)).append("&");
             } else {
                 content.append(URLEncoder.encode(FieldName.OrderNumber, UTF8)).append("=");
                 content.append(URLEncoder.encode(params.get(FieldName.OrderNumber), UTF8)).append("&");
@@ -133,8 +134,8 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
     }
 
     private static String getCFSIDFromLink(String link) throws Exception {
-        String cfsid = link.split("CFSID=")[1].split("&")[0];
-        if (cfsid != null && cfsid.matches("[\\w]{24}")) {
+        String cfsid = URLDecoder.decode(link.split("CFSID=")[1].split("&")[0], UTF8);
+        if (cfsid != null && cfsid.matches("[\\w+/=]+")) {
             return cfsid;
         }
         Log.e(TAG, "Link parsing error. Check your CFSID");
