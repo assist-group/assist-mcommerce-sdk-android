@@ -359,6 +359,10 @@ public class AssistPayEngine {
         rp.register(new RegistrationRequestBuilder(regData));
     }
 
+    public void clearRegistration() {
+        getInstInfo().clearAppRegID();
+    }
+
     private void onRegistrationSuccess(String deviceId, String registrationID) {
         getInstInfo().setAppRegID(deviceId, registrationID);
     }

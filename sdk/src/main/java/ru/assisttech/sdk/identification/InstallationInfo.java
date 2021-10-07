@@ -51,6 +51,16 @@ public class InstallationInfo {
         editor.commit();
     }
 
+    public void clearAppRegID() {
+        String deviceId = settings.getString(APP_REG_ID, null);
+        if (deviceId != null) {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(APP_REG_ID, null);
+            editor.putString(deviceId, null);
+            editor.commit();
+        }
+    }
+
     public String appName() {
         return appName;
     }
