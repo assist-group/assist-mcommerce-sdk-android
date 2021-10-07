@@ -30,12 +30,12 @@ import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
-//import com.samsung.android.sdk.samsungpay.v2.PartnerInfo;
-//import com.samsung.android.sdk.samsungpay.v2.SamsungPay;
-//import com.samsung.android.sdk.samsungpay.v2.StatusListener;
-//import com.samsung.android.sdk.samsungpay.v2.payment.CardInfo;
-//import com.samsung.android.sdk.samsungpay.v2.payment.PaymentInfo;
-//import com.samsung.android.sdk.samsungpay.v2.payment.PaymentManager;
+import com.samsung.android.sdk.samsungpay.v2.PartnerInfo;
+import com.samsung.android.sdk.samsungpay.v2.SamsungPay;
+import com.samsung.android.sdk.samsungpay.v2.StatusListener;
+import com.samsung.android.sdk.samsungpay.v2.payment.CardInfo;
+import com.samsung.android.sdk.samsungpay.v2.payment.PaymentInfo;
+import com.samsung.android.sdk.samsungpay.v2.payment.PaymentManager;
 
 import org.json.JSONObject;
 
@@ -74,9 +74,9 @@ public class ConfirmationActivity extends FragmentActivity {
 
     // Samsung Pay
     private Button btSamsungPay;
-//    private SamsungPay samsungPay;
+    private SamsungPay samsungPay;
     private Bundle bundle;
-//    private PaymentManager paymentManager;
+    private PaymentManager paymentManager;
     final String serviceId = "c84b694b18674b8f92e598";
 
     @Override
@@ -131,7 +131,7 @@ public class ConfirmationActivity extends FragmentActivity {
             });
 
             enableGooglePay();
-//            enableSamsungPay();
+            enableSamsungPay();
         } else {
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
@@ -186,40 +186,40 @@ public class ConfirmationActivity extends FragmentActivity {
                 });
     }
 
-//    private void enableSamsungPay() {
-//        btSamsungPay = findViewById(R.id.btSamsungPay);
-//
-//        bundle = new Bundle();
-//        bundle.putString(
-//                SamsungPay.PARTNER_SERVICE_TYPE, SamsungPay.ServiceType.INAPP_PAYMENT.toString()
-//        );
-//
-//        PartnerInfo pInfo = new PartnerInfo(serviceId, bundle);
-//        samsungPay = new SamsungPay(this, pInfo);
-//
-//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-//            btSamsungPay.setVisibility(View.INVISIBLE);
-//        } else {
-//            samsungPay.getSamsungPayStatus(new StatusListener() {
-//                @Override
-//                public void onSuccess(int i, Bundle bundle) {
-//                    processSamsungPayStatus(i);
-//                }
-//
-//                @Override
-//                public void onFail(int i, Bundle bundle) {
-//                    btSamsungPay.setVisibility(View.INVISIBLE);
-//                    Log.d(TAG, "checkSamsungPayStatus onFail() : " + i);
-//                }
-//            });
-//        }
-//        btSamsungPay.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startSamsungPay();
-//            }
-//        });
-//    }
+    private void enableSamsungPay() {
+        btSamsungPay = findViewById(R.id.btSamsungPay);
+
+        bundle = new Bundle();
+        bundle.putString(
+                SamsungPay.PARTNER_SERVICE_TYPE, SamsungPay.ServiceType.INAPP_PAYMENT.toString()
+        );
+
+        PartnerInfo pInfo = new PartnerInfo(serviceId, bundle);
+        samsungPay = new SamsungPay(this, pInfo);
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            btSamsungPay.setVisibility(View.INVISIBLE);
+        } else {
+            samsungPay.getSamsungPayStatus(new StatusListener() {
+                @Override
+                public void onSuccess(int i, Bundle bundle) {
+                    processSamsungPayStatus(i);
+                }
+
+                @Override
+                public void onFail(int i, Bundle bundle) {
+                    btSamsungPay.setVisibility(View.INVISIBLE);
+                    Log.d(TAG, "checkSamsungPayStatus onFail() : " + i);
+                }
+            });
+        }
+        btSamsungPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startSamsungPay();
+            }
+        });
+    }
 
     /**
      * Handle a resolved activity from the Google Pay payment sheet
@@ -434,165 +434,165 @@ public class ConfirmationActivity extends FragmentActivity {
         }
     }
 
-//    private void processSamsungPayStatus(int status) {
-//        switch (status) {
-//            case SamsungPay.SPAY_NOT_SUPPORTED:
-//                btSamsungPay.setVisibility(View.INVISIBLE);
-//                break;
-//            case SamsungPay.SPAY_NOT_READY:
-//                int extra_reason = bundle.getInt(SamsungPay.EXTRA_ERROR_REASON);
-//                switch(extra_reason) {
-//                    case SamsungPay.ERROR_SPAY_APP_NEED_TO_UPDATE:
-//                        samsungPay.goToUpdatePage();
-//                        break;
-//                    case SamsungPay.ERROR_SPAY_SETUP_NOT_COMPLETED:
-//                        samsungPay.activateSamsungPay();
-//                        break;
-//                    default:
-//                        btSamsungPay.setVisibility(View.INVISIBLE);
-//                        Log.e(TAG, "Samsung PAY is not ready, extra reason: " + extra_reason);
-//                }
-//                btSamsungPay.setVisibility(View.INVISIBLE);
-//                break;
-//            case SamsungPay.SPAY_READY:
-//                // Samsung Pay is ready
-//                btSamsungPay.setVisibility(View.VISIBLE);
-//                break;
-//            default:
-//                // Not expected result
-//                btSamsungPay.setVisibility(View.INVISIBLE);
-//                break;
-//        }
-//    }
-//
-//    private void startSamsungPay() {
-//        try {
-//            Bundle bundle = new Bundle();
-//            bundle.putString(SamsungPay.PARTNER_SERVICE_TYPE, SamsungPay.ServiceType.INAPP_PAYMENT.toString());
-//
-//            PartnerInfo partnerInfo = new PartnerInfo(serviceId, bundle);
-//            paymentManager = new PaymentManager(this, partnerInfo);
-//            paymentManager.startInAppPay(makeTransactionDetails(), transactionListener);
-//        } catch (NullPointerException e) {
-//            Toast.makeText(this, "All mandatory fields cannot be null.", Toast.LENGTH_LONG).show();
-//            e.printStackTrace();
-//        } catch (IllegalStateException e) {
-//            Toast.makeText(this, "IllegalStateException", Toast.LENGTH_LONG).show();
-//            e.printStackTrace();
-//        } catch (NumberFormatException e) {
-//            Toast.makeText(this, "Amount values is not valid", Toast.LENGTH_LONG).show();
-//            e.printStackTrace();
-//        } catch (IllegalArgumentException e) {
-//            Toast.makeText(this, "PaymentInfo values not valid or all mandatory fields not set.",
-//                    Toast.LENGTH_LONG).show();
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    /*
-//     * TransactionInfoListener is for listening to callback events of online (in-app) payments.
-//     * This is invoked when card or address is changed by the user on the payment sheet,
-//     * and also with the success or failure of online (in-app) payment.
-//     */
-//    private PaymentManager.TransactionInfoListener transactionListener =
-//            new PaymentManager.TransactionInfoListener() {
-//                // This callback is received when the user modifies or selects a new address
-//                // on the payment sheet.
-//                @Override
-//                public void onAddressUpdated(PaymentInfo paymentInfo) {
-//                    try {
-//                        /* Do address verification by merchant app
-//                         * setAddressInPaymentSheet(PaymentInfo.AddressInPaymentSheet.NEED_BILLING_SEND_SHIPPING)
-//                         * If you set NEED_BILLING_SEND_SHIPPING or NEED_BILLING_SPAY with like upper codes,
-//                         * you can get Billing Address with getBillingAddress().
-//                         * If you set NEED_BILLING_AND_SHIPPING or NEED_SHIPPING_SPAY,
-//                         * you can get Shipping Address with getShippingAddress().
-//                         */
-//                        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
-//                                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
-//
-//                                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
-//                                .build();
-//                        paymentManager.updateAmount(amount);
-//                    } catch (IllegalStateException | NullPointerException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                // This callback is received when the user changes the card selected on the payment sheet
-//                // in Samsung Pay
-//                @Override
-//                public void onCardInfoUpdated(CardInfo selectedCardInfo) {
-//                    /*
-//                     * Called when the user changes card in Samsung Pay. Newly selected cardInfo is passed and
-//                     * merchant app can update transaction amount based on new card (if needed).
-//                     */
-//                    try {
-//
-//                        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
-//                                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
-//                                .setItemTotalPrice(data.getFields().get(FieldName.OrderAmount))
-//                                .setShippingPrice("0")
-//                                .setTax("0")
-//                                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
-//                                .build();
-//                        // Call updateAmount() method. This is mandatory.
-//                        paymentManager.updateAmount(amount);
-//                    } catch (IllegalStateException | NullPointerException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                /*
-//                 * This callback is received when the online (in-app) payment transaction is approved by
-//                 * user and able to successfully generate in-app payload.
-//                 * The payload could be an encrypted cryptogram (direct in-app payment)
-//                 * or Payment Gateway's token reference ID (indirect in-app payment).
-//                 */
-//                @Override
-//                public void onSuccess(PaymentInfo response, String paymentCredential,
-//                                      Bundle extraPaymentData) {
-//                    payToken(paymentCredential, PaymentTokenType.SAMSUNT_PAY);
-//
-//                }
-//                // This callback is received when the online payment transaction has failed.
-//                @Override
-//                public void onFailure(int errorCode, Bundle errorData) {
-//                    Toast.makeText(ConfirmationActivity.this, "Transaction : onFailure : "+ errorCode,
-//                            Toast.LENGTH_LONG).show();
-//                }
-//            };
-//
-//    private PaymentInfo makeTransactionDetails() {
-//        ArrayList<PaymentManager.Brand> brandList = new ArrayList<>();
-//        // If the supported card brand is not specified, all card brands in Samsung Pay are
-//        // listed in the Payment Sheet. Only Visa and Mastercard are currently supported.
-//        brandList.add(PaymentManager.Brand.MASTERCARD);
-//        brandList.add(PaymentManager.Brand.VISA);
-//
-//        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
-//                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
-//                .setItemTotalPrice(data.getFields().get(FieldName.OrderAmount))
-//                .setShippingPrice("0")
-//                .setTax("0")
-//                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
-//                .build();
-//        PaymentInfo.Builder paymentInfoBuilder = new PaymentInfo.Builder();
-//        String merchantId = data.getMerchantID();
-//        PaymentInfo paymentInfo = paymentInfoBuilder
-//                .setMerchantId(merchantId)
-//                .setMerchantName("Sample Merchant")
-//                .setOrderNumber(data.getFields().get(FieldName.OrderNumber))
-//                .setPaymentProtocol(PaymentInfo.PaymentProtocol.PROTOCOL_3DS)
-//                /* Include NEED_BILLING_SEND_SHIPPING option for AddressInPaymentSheet if merchant needs
-//                * the billing address from Samsung Pay but wants to send the shipping address to Samsung Pay.
-//                * Both billing and shipping address will be shown on the payment sheet.
-//                */
-//                .setAddressInPaymentSheet(PaymentInfo.AddressInPaymentSheet.DO_NOT_SHOW)
-//                //.setShippingAddress(shippingAddress)
-//                .setAllowedCardBrands(brandList)
-//                .setCardHolderNameEnabled(true)
-//                .setRecurringEnabled(false)
-//                .setAmount(amount)
-//                .build();
-//        return paymentInfo;
-//    }
+    private void processSamsungPayStatus(int status) {
+        switch (status) {
+            case SamsungPay.SPAY_NOT_SUPPORTED:
+                btSamsungPay.setVisibility(View.INVISIBLE);
+                break;
+            case SamsungPay.SPAY_NOT_READY:
+                int extra_reason = bundle.getInt(SamsungPay.EXTRA_ERROR_REASON);
+                switch(extra_reason) {
+                    case SamsungPay.ERROR_SPAY_APP_NEED_TO_UPDATE:
+                        samsungPay.goToUpdatePage();
+                        break;
+                    case SamsungPay.ERROR_SPAY_SETUP_NOT_COMPLETED:
+                        samsungPay.activateSamsungPay();
+                        break;
+                    default:
+                        btSamsungPay.setVisibility(View.INVISIBLE);
+                        Log.e(TAG, "Samsung PAY is not ready, extra reason: " + extra_reason);
+                }
+                btSamsungPay.setVisibility(View.INVISIBLE);
+                break;
+            case SamsungPay.SPAY_READY:
+                // Samsung Pay is ready
+                btSamsungPay.setVisibility(View.VISIBLE);
+                break;
+            default:
+                // Not expected result
+                btSamsungPay.setVisibility(View.INVISIBLE);
+                break;
+        }
+    }
+
+    private void startSamsungPay() {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(SamsungPay.PARTNER_SERVICE_TYPE, SamsungPay.ServiceType.INAPP_PAYMENT.toString());
+
+            PartnerInfo partnerInfo = new PartnerInfo(serviceId, bundle);
+            paymentManager = new PaymentManager(this, partnerInfo);
+            paymentManager.startInAppPay(makeTransactionDetails(), transactionListener);
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "All mandatory fields cannot be null.", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            Toast.makeText(this, "IllegalStateException", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Amount values is not valid", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(this, "PaymentInfo values not valid or all mandatory fields not set.",
+                    Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * TransactionInfoListener is for listening to callback events of online (in-app) payments.
+     * This is invoked when card or address is changed by the user on the payment sheet,
+     * and also with the success or failure of online (in-app) payment.
+     */
+    private PaymentManager.TransactionInfoListener transactionListener =
+            new PaymentManager.TransactionInfoListener() {
+                // This callback is received when the user modifies or selects a new address
+                // on the payment sheet.
+                @Override
+                public void onAddressUpdated(PaymentInfo paymentInfo) {
+                    try {
+                        /* Do address verification by merchant app
+                         * setAddressInPaymentSheet(PaymentInfo.AddressInPaymentSheet.NEED_BILLING_SEND_SHIPPING)
+                         * If you set NEED_BILLING_SEND_SHIPPING or NEED_BILLING_SPAY with like upper codes,
+                         * you can get Billing Address with getBillingAddress().
+                         * If you set NEED_BILLING_AND_SHIPPING or NEED_SHIPPING_SPAY,
+                         * you can get Shipping Address with getShippingAddress().
+                         */
+                        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
+                                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
+
+                                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
+                                .build();
+                        paymentManager.updateAmount(amount);
+                    } catch (IllegalStateException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
+                // This callback is received when the user changes the card selected on the payment sheet
+                // in Samsung Pay
+                @Override
+                public void onCardInfoUpdated(CardInfo selectedCardInfo) {
+                    /*
+                     * Called when the user changes card in Samsung Pay. Newly selected cardInfo is passed and
+                     * merchant app can update transaction amount based on new card (if needed).
+                     */
+                    try {
+
+                        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
+                                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
+                                .setItemTotalPrice(data.getFields().get(FieldName.OrderAmount))
+                                .setShippingPrice("0")
+                                .setTax("0")
+                                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
+                                .build();
+                        // Call updateAmount() method. This is mandatory.
+                        paymentManager.updateAmount(amount);
+                    } catch (IllegalStateException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
+                /*
+                 * This callback is received when the online (in-app) payment transaction is approved by
+                 * user and able to successfully generate in-app payload.
+                 * The payload could be an encrypted cryptogram (direct in-app payment)
+                 * or Payment Gateway's token reference ID (indirect in-app payment).
+                 */
+                @Override
+                public void onSuccess(PaymentInfo response, String paymentCredential,
+                                      Bundle extraPaymentData) {
+                    payToken(paymentCredential, PaymentTokenType.SAMSUNT_PAY);
+
+                }
+                // This callback is received when the online payment transaction has failed.
+                @Override
+                public void onFailure(int errorCode, Bundle errorData) {
+                    Toast.makeText(ConfirmationActivity.this, "Transaction : onFailure : "+ errorCode,
+                            Toast.LENGTH_LONG).show();
+                }
+            };
+
+    private PaymentInfo makeTransactionDetails() {
+        ArrayList<PaymentManager.Brand> brandList = new ArrayList<>();
+        // If the supported card brand is not specified, all card brands in Samsung Pay are
+        // listed in the Payment Sheet. Only Visa and Mastercard are currently supported.
+        brandList.add(PaymentManager.Brand.MASTERCARD);
+        brandList.add(PaymentManager.Brand.VISA);
+
+        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
+                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
+                .setItemTotalPrice(data.getFields().get(FieldName.OrderAmount))
+                .setShippingPrice("0")
+                .setTax("0")
+                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
+                .build();
+        PaymentInfo.Builder paymentInfoBuilder = new PaymentInfo.Builder();
+        String merchantId = data.getMerchantID();
+        PaymentInfo paymentInfo = paymentInfoBuilder
+                .setMerchantId(merchantId)
+                .setMerchantName("Sample Merchant")
+                .setOrderNumber(data.getFields().get(FieldName.OrderNumber))
+                .setPaymentProtocol(PaymentInfo.PaymentProtocol.PROTOCOL_3DS)
+                /* Include NEED_BILLING_SEND_SHIPPING option for AddressInPaymentSheet if merchant needs
+                * the billing address from Samsung Pay but wants to send the shipping address to Samsung Pay.
+                * Both billing and shipping address will be shown on the payment sheet.
+                */
+                .setAddressInPaymentSheet(PaymentInfo.AddressInPaymentSheet.DO_NOT_SHOW)
+                //.setShippingAddress(shippingAddress)
+                .setAllowedCardBrands(brandList)
+                .setCardHolderNameEnabled(true)
+                .setRecurringEnabled(false)
+                .setAmount(amount)
+                .build();
+        return paymentInfo;
+    }
 }
