@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -127,6 +128,15 @@ public class MainActivity extends FragmentActivity {
         );
         urlsAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
         spURL.setAdapter(urlsAdapter);
+        spURL.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                engine.clearRegistration();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
 
         viewItems.setOnClickListener(new View.OnClickListener() {
             @Override
