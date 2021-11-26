@@ -31,6 +31,16 @@ public class SystemInfo {
         String model = Build.MODEL;
         String manufacturer = Build.MANUFACTURER;
         uniqueId = String.format(Locale.US, "%1$d,%2$s,%3$.15s,%4$s", androidSdk, manufacturer, model, UUID.randomUUID().toString());
+        uniqueId = uniqueId
+                .replace("(", "")
+                .replace(")", "")
+                .replace("<", "")
+                .replace(">", "")
+                .replace("=", "")
+                .replace("'", "")
+                .replace(";", "")
+                .replace("#", "")
+                .replace("/", "");
         if (uniqueId.length() >= UNIQUE_ID_STRING_MAX_LENGTH) {
             uniqueId = uniqueId.substring(0, UNIQUE_ID_STRING_MAX_LENGTH - 1);
         }
