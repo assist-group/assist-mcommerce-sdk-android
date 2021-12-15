@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 public enum PaymentTokenType {
 
     GOOGLE_PAY("2"),
-    SAMSUNT_PAY("3");
+    SAMSUNG_PAY("3");
 
     PaymentTokenType(String value) {
         this.value = value;

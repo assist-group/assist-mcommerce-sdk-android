@@ -30,3 +30,6 @@
 -keepclassmembers class io.card.** {
     *;
 }
+-dontwarn com.samsung.android.sdk.samsungpay.**
+-keep class com.samsung.android.sdk.** { *; }
+-keep interface com.samsung.android.sdk.** { *; }

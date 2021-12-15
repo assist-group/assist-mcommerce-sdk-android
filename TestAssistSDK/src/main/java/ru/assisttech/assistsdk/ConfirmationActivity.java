@@ -32,10 +32,14 @@ import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
 import com.samsung.android.sdk.samsungpay.v2.PartnerInfo;
 import com.samsung.android.sdk.samsungpay.v2.SamsungPay;
+import com.samsung.android.sdk.samsungpay.v2.SpaySdk;
 import com.samsung.android.sdk.samsungpay.v2.StatusListener;
 import com.samsung.android.sdk.samsungpay.v2.payment.CardInfo;
-import com.samsung.android.sdk.samsungpay.v2.payment.PaymentInfo;
+import com.samsung.android.sdk.samsungpay.v2.payment.CustomSheetPaymentInfo;
 import com.samsung.android.sdk.samsungpay.v2.payment.PaymentManager;
+import com.samsung.android.sdk.samsungpay.v2.payment.sheet.AmountBoxControl;
+import com.samsung.android.sdk.samsungpay.v2.payment.sheet.AmountConstants;
+import com.samsung.android.sdk.samsungpay.v2.payment.sheet.CustomSheet;
 
 import org.json.JSONObject;
 
@@ -59,6 +63,12 @@ import ru.assisttech.sdk.storage.AssistTransactionStorage;
 public class ConfirmationActivity extends FragmentActivity {
 
     public static final String TAG = "ConfirmationActivity";
+
+    private static final String AMOUNT_CONTROL_ID = "amountControlId";
+    private static final String PRODUCT_ITEM_ID = "productItemId";
+    private static final String PRODUCT_TAX_ID = "productTaxId";
+    private static final String PRODUCT_SHIPPING_ID = "productShippingId";
+    private static final String PRODUCT_FUEL_ID = "productFuelId";
 
     private ApplicationConfiguration configuration;
     private AssistPayEngine engine;
@@ -191,7 +201,7 @@ public class ConfirmationActivity extends FragmentActivity {
 
         bundle = new Bundle();
         bundle.putString(
-                SamsungPay.PARTNER_SERVICE_TYPE, SamsungPay.ServiceType.INAPP_PAYMENT.toString()
+                SpaySdk.PARTNER_SERVICE_TYPE, SpaySdk.ServiceType.INAPP_PAYMENT.toString()
         );
 
         PartnerInfo pInfo = new PartnerInfo(serviceId, bundle);
@@ -436,25 +446,25 @@ public class ConfirmationActivity extends FragmentActivity {
 
     private void processSamsungPayStatus(int status) {
         switch (status) {
-            case SamsungPay.SPAY_NOT_SUPPORTED:
+            case SpaySdk.SPAY_NOT_SUPPORTED:
                 btSamsungPay.setVisibility(View.INVISIBLE);
                 break;
-            case SamsungPay.SPAY_NOT_READY:
-                int extra_reason = bundle.getInt(SamsungPay.EXTRA_ERROR_REASON);
-                switch(extra_reason) {
-                    case SamsungPay.ERROR_SPAY_APP_NEED_TO_UPDATE:
+            case SpaySdk.SPAY_NOT_READY:
+                int extraReason = bundle.getInt(SpaySdk.EXTRA_ERROR_REASON);
+                switch(extraReason) {
+                    case SpaySdk.ERROR_SPAY_APP_NEED_TO_UPDATE:
                         samsungPay.goToUpdatePage();
                         break;
-                    case SamsungPay.ERROR_SPAY_SETUP_NOT_COMPLETED:
+                    case SpaySdk.ERROR_SPAY_SETUP_NOT_COMPLETED:
                         samsungPay.activateSamsungPay();
                         break;
                     default:
                         btSamsungPay.setVisibility(View.INVISIBLE);
-                        Log.e(TAG, "Samsung PAY is not ready, extra reason: " + extra_reason);
+                        Log.e(TAG, "Samsung PAY is not ready, extra reason: " + extraReason);
                 }
                 btSamsungPay.setVisibility(View.INVISIBLE);
                 break;
-            case SamsungPay.SPAY_READY:
+            case SpaySdk.SPAY_READY:
                 // Samsung Pay is ready
                 btSamsungPay.setVisibility(View.VISIBLE);
                 break;
@@ -468,11 +478,11 @@ public class ConfirmationActivity extends FragmentActivity {
     private void startSamsungPay() {
         try {
             Bundle bundle = new Bundle();
-            bundle.putString(SamsungPay.PARTNER_SERVICE_TYPE, SamsungPay.ServiceType.INAPP_PAYMENT.toString());
+            bundle.putString(SpaySdk.PARTNER_SERVICE_TYPE, SpaySdk.ServiceType.INAPP_PAYMENT.toString());
 
             PartnerInfo partnerInfo = new PartnerInfo(serviceId, bundle);
             paymentManager = new PaymentManager(this, partnerInfo);
-            paymentManager.startInAppPay(makeTransactionDetails(), transactionListener);
+            paymentManager.startInAppPayWithCustomSheet(makeCustomSheetPaymentInfo(), transactionListener);
         } catch (NullPointerException e) {
             Toast.makeText(this, "All mandatory fields cannot be null.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -494,105 +504,77 @@ public class ConfirmationActivity extends FragmentActivity {
      * This is invoked when card or address is changed by the user on the payment sheet,
      * and also with the success or failure of online (in-app) payment.
      */
-    private PaymentManager.TransactionInfoListener transactionListener =
-            new PaymentManager.TransactionInfoListener() {
-                // This callback is received when the user modifies or selects a new address
-                // on the payment sheet.
-                @Override
-                public void onAddressUpdated(PaymentInfo paymentInfo) {
-                    try {
-                        /* Do address verification by merchant app
-                         * setAddressInPaymentSheet(PaymentInfo.AddressInPaymentSheet.NEED_BILLING_SEND_SHIPPING)
-                         * If you set NEED_BILLING_SEND_SHIPPING or NEED_BILLING_SPAY with like upper codes,
-                         * you can get Billing Address with getBillingAddress().
-                         * If you set NEED_BILLING_AND_SHIPPING or NEED_SHIPPING_SPAY,
-                         * you can get Shipping Address with getShippingAddress().
-                         */
-                        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
-                                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
+    private final PaymentManager.CustomSheetTransactionInfoListener transactionListener
+            = new PaymentManager.CustomSheetTransactionInfoListener() {
+        // This callback is received when the user changes card on the custom payment sheet in Samsung Pay
+        @Override
+        public void onCardInfoUpdated(CardInfo selectedCardInfo, CustomSheet customSheet) {
+            double amount = Double.parseDouble(data.getFields().get(FieldName.OrderAmount));
+            /*
+             * Called when the user changes card in Samsung Pay.
+             * Newly selected cardInfo is passed so merchant app can update transaction amount
+             * based on different card (if needed),
+             */
+            try {
+                AmountBoxControl amountBoxControl = (AmountBoxControl) customSheet.getSheetControl(AMOUNT_CONTROL_ID);
+                amountBoxControl.updateValue(PRODUCT_ITEM_ID, amount); //item price
+                amountBoxControl.updateValue(PRODUCT_TAX_ID, 0); // sales tax
+                amountBoxControl.updateValue(PRODUCT_SHIPPING_ID, 0); // Shipping fee
+                amountBoxControl.updateValue(PRODUCT_FUEL_ID, 0, "Pending"); // additional item status
+                amountBoxControl.setAmountTotal(amount, AmountConstants.FORMAT_TOTAL_PRICE_ONLY); // grand total
+                customSheet.updateControl(amountBoxControl);
+                // Call updateAmount() method. This is mandatory.
+                paymentManager.updateSheet(customSheet);
+            } catch (IllegalStateException | NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
 
-                                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
-                                .build();
-                        paymentManager.updateAmount(amount);
-                    } catch (IllegalStateException | NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                }
-                // This callback is received when the user changes the card selected on the payment sheet
-                // in Samsung Pay
-                @Override
-                public void onCardInfoUpdated(CardInfo selectedCardInfo) {
-                    /*
-                     * Called when the user changes card in Samsung Pay. Newly selected cardInfo is passed and
-                     * merchant app can update transaction amount based on new card (if needed).
-                     */
-                    try {
+        @Override
+        public void onSuccess(CustomSheetPaymentInfo response, String paymentCredential, Bundle extraPaymentData) {
+            payToken(paymentCredential, PaymentTokenType.SAMSUNG_PAY);
+        }
 
-                        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
-                                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
-                                .setItemTotalPrice(data.getFields().get(FieldName.OrderAmount))
-                                .setShippingPrice("0")
-                                .setTax("0")
-                                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
-                                .build();
-                        // Call updateAmount() method. This is mandatory.
-                        paymentManager.updateAmount(amount);
-                    } catch (IllegalStateException | NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                }
-                /*
-                 * This callback is received when the online (in-app) payment transaction is approved by
-                 * user and able to successfully generate in-app payload.
-                 * The payload could be an encrypted cryptogram (direct in-app payment)
-                 * or Payment Gateway's token reference ID (indirect in-app payment).
-                 */
-                @Override
-                public void onSuccess(PaymentInfo response, String paymentCredential,
-                                      Bundle extraPaymentData) {
-                    payToken(paymentCredential, PaymentTokenType.SAMSUNT_PAY);
-
-                }
-                // This callback is received when the online payment transaction has failed.
-                @Override
-                public void onFailure(int errorCode, Bundle errorData) {
-                    Toast.makeText(ConfirmationActivity.this, "Transaction : onFailure : "+ errorCode,
+        @Override
+        public void onFailure(int errorCode, Bundle errorData) {
+            Toast.makeText(ConfirmationActivity.this, "Transaction : onFailure : " + errorCode,
                             Toast.LENGTH_LONG).show();
-                }
-            };
+        }
+    };
 
-    private PaymentInfo makeTransactionDetails() {
-        ArrayList<PaymentManager.Brand> brandList = new ArrayList<>();
-        // If the supported card brand is not specified, all card brands in Samsung Pay are
-        // listed in the Payment Sheet. Only Visa and Mastercard are currently supported.
-        brandList.add(PaymentManager.Brand.MASTERCARD);
-        brandList.add(PaymentManager.Brand.VISA);
+    private CustomSheetPaymentInfo makeCustomSheetPaymentInfo() {
+        ArrayList<SpaySdk.Brand> brandList = new ArrayList<>();
+        // If the supported brand is not specified, all card brands in Samsung Pay are
+        // listed in the Payment Sheet.
+        brandList.add(SpaySdk.Brand.VISA);
+        brandList.add(SpaySdk.Brand.MASTERCARD);
+        /*
+         * Make the SheetControls you want and add them to custom sheet.
+         * Place each control in sequence with AmountBoxControl listed last.
+         */
+        CustomSheet customSheet = new CustomSheet();
+        AmountBoxControl amountBoxControl
+                = new AmountBoxControl(AMOUNT_CONTROL_ID, data.getFields().get(FieldName.OrderCurrency));
 
-        PaymentInfo.Amount amount = new PaymentInfo.Amount.Builder()
-                .setCurrencyCode(data.getFields().get(FieldName.OrderCurrency))
-                .setItemTotalPrice(data.getFields().get(FieldName.OrderAmount))
-                .setShippingPrice("0")
-                .setTax("0")
-                .setTotalPrice(data.getFields().get(FieldName.OrderAmount))
-                .build();
-        PaymentInfo.Builder paymentInfoBuilder = new PaymentInfo.Builder();
+        double amount = Double.parseDouble(data.getFields().get(FieldName.OrderAmount));
+
+        amountBoxControl.addItem(PRODUCT_ITEM_ID, "Item", amount, ""); //item price
+        amountBoxControl.addItem(PRODUCT_TAX_ID, "Tax", 0, ""); // sales tax
+        amountBoxControl.addItem(PRODUCT_SHIPPING_ID, "Shipping", 0, ""); // Shipping fee
+        amountBoxControl.addItem(PRODUCT_FUEL_ID, "Fuel", 0, ""); // additional item status
+        amountBoxControl.setAmountTotal(amount, AmountConstants.FORMAT_TOTAL_PRICE_ONLY); // grand total
+        customSheet.addControl(amountBoxControl);
         String merchantId = data.getMerchantID();
-        PaymentInfo paymentInfo = paymentInfoBuilder
+        return new CustomSheetPaymentInfo.Builder()
                 .setMerchantId(merchantId)
                 .setMerchantName("Sample Merchant")
                 .setOrderNumber(data.getFields().get(FieldName.OrderNumber))
-                .setPaymentProtocol(PaymentInfo.PaymentProtocol.PROTOCOL_3DS)
-                /* Include NEED_BILLING_SEND_SHIPPING option for AddressInPaymentSheet if merchant needs
-                * the billing address from Samsung Pay but wants to send the shipping address to Samsung Pay.
-                * Both billing and shipping address will be shown on the payment sheet.
-                */
-                .setAddressInPaymentSheet(PaymentInfo.AddressInPaymentSheet.DO_NOT_SHOW)
-                //.setShippingAddress(shippingAddress)
+                .setPaymentProtocol(CustomSheetPaymentInfo.PaymentProtocol.PROTOCOL_3DS)
+                .setAddressInPaymentSheet(CustomSheetPaymentInfo.AddressInPaymentSheet.DO_NOT_SHOW)
                 .setAllowedCardBrands(brandList)
                 .setCardHolderNameEnabled(true)
                 .setRecurringEnabled(false)
-                .setAmount(amount)
+                .setCustomSheet(customSheet)
                 .build();
-        return paymentInfo;
     }
 }
