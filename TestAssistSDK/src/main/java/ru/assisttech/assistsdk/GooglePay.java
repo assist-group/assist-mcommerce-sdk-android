@@ -70,7 +70,8 @@ class GooglePay {
     private static JSONArray getAllowedCardNetworks() {
         return new JSONArray()
                 .put("MASTERCARD")
-                .put("VISA");
+                .put("VISA")
+                .put("MIR");
     }
 
     /**
@@ -85,6 +86,7 @@ class GooglePay {
     private static JSONArray getAllowedCardAuthMethods() {
         return new JSONArray()
                 .put("CRYPTOGRAM_3DS");
+//                .put("PAN_ONLY");
     }
 
     /**
