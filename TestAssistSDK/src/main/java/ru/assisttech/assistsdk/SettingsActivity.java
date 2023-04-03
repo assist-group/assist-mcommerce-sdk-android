@@ -18,6 +18,7 @@ public class SettingsActivity extends UpButtonActivity {
     static Boolean qiwiMtsPayment;
     static Boolean qiwiMegafonPayment;
     static Boolean qiwiBeelinePayment;
+    static Boolean mirPayPayment;
 
     static Boolean recurringIndicator;
     static String minAmount;
@@ -40,6 +41,7 @@ public class SettingsActivity extends UpButtonActivity {
     private CheckBox chQIWIMTSPayment;
     private CheckBox chQIWIMegafonPayment;
     private CheckBox chQIWIBeelinePayment;
+    private CheckBox chMirPayPayment;
 
     private CheckBox chRecurringPayment;
     private EditText etRecMinAmt;
@@ -89,6 +91,7 @@ public class SettingsActivity extends UpButtonActivity {
         if(qiwiMtsPayment != null) params.setQIWIMtsPayment(qiwiMtsPayment);
         if(qiwiMegafonPayment != null) params.setQIWIMegafonPayment(qiwiMegafonPayment);
         if(qiwiBeelinePayment != null) params.setQIWIBeelinePayment(qiwiBeelinePayment);
+        if(mirPayPayment != null) params.setMirPayPayment(mirPayPayment);
     }
 
     public static void setFiscalData(AssistPaymentData params) {
@@ -112,6 +115,7 @@ public class SettingsActivity extends UpButtonActivity {
         chQIWIMTSPayment = findViewById(R.id.chQIWIMtsPayment);
         chQIWIMegafonPayment = findViewById(R.id.chQIWIMegafonPayment);
         chQIWIBeelinePayment = findViewById(R.id.chQIWIBeelinePayment);
+        chMirPayPayment = findViewById(R.id.chMirPayPayment);
 
         chRecurringPayment = findViewById(R.id.chRecurringIndicator);
         etRecMinAmt = findViewById(R.id.etRecMinAmt);
@@ -165,6 +169,9 @@ public class SettingsActivity extends UpButtonActivity {
         }
         if(qiwiBeelinePayment != null) {
             chQIWIBeelinePayment.setChecked(qiwiBeelinePayment);
+        }
+        if(mirPayPayment != null) {
+            chMirPayPayment.setChecked(mirPayPayment);
         }
 
         /* Recurring */
@@ -229,6 +236,7 @@ public class SettingsActivity extends UpButtonActivity {
         qiwiMtsPayment = chQIWIMTSPayment.isChecked();
         qiwiMegafonPayment = chQIWIMegafonPayment.isChecked();
         qiwiBeelinePayment = chQIWIBeelinePayment.isChecked();
+        mirPayPayment = chMirPayPayment.isChecked();
 
         /* Recurring */
         recurringIndicator = chRecurringPayment.isChecked();

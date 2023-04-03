@@ -2,29 +2,31 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion rootProject.compile_sdk_version
-    buildToolsVersion rootProject.build_tool_version
 
     defaultConfig {
         minSdkVersion rootProject.min_sdk_version
         targetSdkVersion rootProject.target_sdk_version
-        versionCode rootProject.version_code
-        versionName rootProject.version_name
     }
     buildTypes {
+        debug{
+            buildConfigField("String","VERSION_NAME","\"${rootProject.version_name}\"")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField("String","VERSION_NAME","\"${rootProject.version_name}\"")
         }
     }
     productFlavors {
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
+    namespace 'ru.assisttech.sdk'
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'io.card:android-sdk:5.5.1'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'org.jsoup:jsoup:1.13.1'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'org.jsoup:jsoup:1.15.3'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }

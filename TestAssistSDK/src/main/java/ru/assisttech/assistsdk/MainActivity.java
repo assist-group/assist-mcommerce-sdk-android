@@ -202,6 +202,7 @@ public class MainActivity extends FragmentActivity {
         data.setQIWIMegafonPayment(false);
         data.setQIWIMtsPayment(false);
         data.setQIWIBeelinePayment(false);
+        data.setMirPayPayment(false);
 
         // Generate key
         KeyPairGenerator kpg;

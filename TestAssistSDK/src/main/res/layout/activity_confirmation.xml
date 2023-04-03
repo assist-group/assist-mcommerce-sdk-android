@@ -141,8 +141,15 @@
             android:id="@+id/btGooglePay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:text="Оплатить с GooglePay"/>
+
+        <Button
+            android:id="@+id/btMirPay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Оплатить с MirPay"/>
 
     </LinearLayout>
 

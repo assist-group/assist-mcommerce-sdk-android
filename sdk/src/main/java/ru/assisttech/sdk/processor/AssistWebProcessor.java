@@ -46,9 +46,9 @@ public class AssistWebProcessor extends AssistBaseProcessor {
 
     private WebContentView webContentView;
     private URL errorURL;
-    private CardPageScanner cardPageScanner;
+    private final CardPageScanner cardPageScanner;
 
-    private boolean useCamera;
+    private final boolean useCamera;
     private boolean resultParsingIsInProcess;
 
     interface WebContentView {

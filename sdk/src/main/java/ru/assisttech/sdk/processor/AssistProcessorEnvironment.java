@@ -9,9 +9,9 @@ import ru.assisttech.sdk.engine.AssistPayEngine;
  */
 public class AssistProcessorEnvironment {
 
-    private AssistPayEngine engine;     /* pay engine instance that started service */
-    private AssistMerchant merchant;    /* Assist registered merchant - money destination */
-    private AssistPaymentData data;     /* payment parameters required by Assist system */
+    private final AssistPayEngine engine;     /* pay engine instance that started service */
+    private final AssistMerchant merchant;    /* Assist registered merchant - money destination */
+    private final AssistPaymentData data;     /* payment parameters required by Assist system */
     private String deviceId;
 
     public AssistProcessorEnvironment(AssistPayEngine engine,

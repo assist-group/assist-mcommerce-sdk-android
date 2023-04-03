@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.compile_sdk_version
-    buildToolsVersion rootProject.build_tool_version
 
     defaultConfig {
         applicationId "ru.assisttech.assistsdk.github"
@@ -49,7 +49,7 @@ android {
             if (System.getenv("TRAVIS")) {
                 signingConfig null
             } else {
-                signingConfig signingConfigs.release
+                signingConfig null
             }
             zipAlignEnabled true
         }
@@ -67,28 +67,35 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'ru.assisttech.assistsdk'
 }
 
 repositories {
     flatDir {
         dirs 'libs'
     }
+    jcenter()
 }
 
 dependencies {
     implementation project(':sdk')
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar','*.aar'], dir: 'libs')
 
     implementation 'io.card:android-sdk:5.5.1'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     // Google Wallet
-    implementation 'com.google.android.gms:play-services-auth:19.0.0'
-    implementation 'com.google.android.gms:play-services-wallet:18.1.2'
+    implementation 'com.google.android.gms:play-services-auth:20.4.0'
+    implementation 'com.google.android.gms:play-services-wallet:19.1.0'
 
     implementation 'com.github.mklimek:ssl-utils-android:1.0.1'
 
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.10.1'
 
     // Optional backport
     implementation 'com.github.dmstocking:support-optional:1.2'
+
+    implementation 'com.roxiemobile.android:android-commons:0.9.1'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.30.1'
+    implementation 'org.bitbucket.b_c:jose4j:0.7.12'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 }

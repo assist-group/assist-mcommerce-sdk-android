@@ -119,7 +119,7 @@ public class AssistRecurrentPayProcessor extends AssistBaseProcessor {
             e.printStackTrace();
         }
 
-        Log.d(TAG, "Request:" + content.toString());
+        Log.d(TAG, "Request:" + content);
 
         return content.toString();
     }

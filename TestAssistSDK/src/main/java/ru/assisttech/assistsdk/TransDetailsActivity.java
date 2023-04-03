@@ -2,13 +2,9 @@ package ru.assisttech.assistsdk;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,14 +51,11 @@ public class TransDetailsActivity extends UpButtonActivity implements PayEngineL
             updateUI(tr);
         }
 
-		findViewById(R.id.btnUpdateStatus).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-                showProgress();
-                engine.setEngineListener(TransDetailsActivity.this);
-			    engine.getOrderResult(TransDetailsActivity.this, tr.getId());
-			}
-		});
+		findViewById(R.id.btnUpdateStatus).setOnClickListener(v -> {
+            showProgress();
+            engine.setEngineListener(TransDetailsActivity.this);
+            engine.getOrderResult(TransDetailsActivity.this, tr.getId());
+        });
 	}
 	
 	@Override
@@ -125,12 +118,7 @@ public class TransDetailsActivity extends UpButtonActivity implements PayEngineL
             dialog.setMessage(getString(R.string.please_wait));
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
-            dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    return true;
-                }
-            });
+            dialog.setOnKeyListener((dialog, keyCode, event) -> true);
             dialog.show();
         }
     }

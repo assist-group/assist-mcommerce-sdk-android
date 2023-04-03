@@ -34,6 +34,7 @@ public class FieldName {
     static public final String QIWIMtsPayment = "QIWIMtsPayment";
     static public final String QIWIMegafonPayment = "QIWIMegafonPayment";
     static public final String QIWIBeelinePayment = "QIWIBeelinePayment";
+    static public final String MirPayPayment = "MirPayPayment";
     static public final String Signature = "Signature";
     static public final String MobileDevice = "MobileDevice";
     static public final String RecurringIndicator = "RecurringIndicator";

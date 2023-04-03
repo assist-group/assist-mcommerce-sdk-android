@@ -13,8 +13,8 @@ public class InstallationInfo {
     private static final String APP_REG_ID = "ApplicationRegId";
 
     private static InstallationInfo instance;
-    private Context context;
-    private SharedPreferences settings;
+    private final Context context;
+    private final SharedPreferences settings;
     private String appName;
     private String versionName;
 

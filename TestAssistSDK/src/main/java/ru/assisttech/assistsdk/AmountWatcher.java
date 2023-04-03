@@ -10,7 +10,7 @@ class AmountWatcher implements TextWatcher {
     private final Pattern sPatternComma = Pattern.compile("\\-?\\d+(,\\d{0,2})?");
 
     private CharSequence mText;
-    private EditText mEdit;
+    private final EditText mEdit;
 
     AmountWatcher(EditText et) {
         mEdit = et;

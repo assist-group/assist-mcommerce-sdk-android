@@ -163,6 +163,10 @@ public class AssistPaymentData {
         values.put(FieldName.QIWIBeelinePayment, Integer.toString(value ? 1 : 0));
     }
 
+    public void setMirPayPayment(boolean value) {
+        values.put(FieldName.MirPayPayment, Integer.toString(value ? 1 : 0));
+    }
+
     public void setMobileDevice(String value) {
         values.put(FieldName.MobileDevice, value);
     }

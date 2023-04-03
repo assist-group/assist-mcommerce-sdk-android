@@ -715,7 +715,7 @@ public class AssistPayEngine {
 
         @Override
         public void onFinished(long id, AssistResult result) {
-            Log.d(TAG, "WebProcessorListener.onFinished() id = : " + String.valueOf(id) + "; " + result.getExtra());
+            Log.d(TAG, "WebProcessorListener.onFinished() id = : " + id + "; " + result.getExtra());
             if (!TextUtils.isEmpty(result.getOrderNumber())) {
                 transactionStorage().updateTransactionOrderNumber(id, result.getOrderNumber());
             }

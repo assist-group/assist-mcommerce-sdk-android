@@ -32,9 +32,9 @@ import ru.assisttech.sdk.storage.AssistTransactionStorage;
 
 public class TransFilterActivity extends UpButtonActivity {
 
-    private SimpleDateFormat formatDate = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
-    private SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm", Locale.getDefault());
-    private SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault());
+    private final SimpleDateFormat formatDate = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
+    private final SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    private final SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault());
 
     private AssistTransactionFilter filter;
     private AssistTransactionStorage storage;
@@ -102,10 +102,10 @@ public class TransFilterActivity extends UpButtonActivity {
         int max = NOT_SPECIFIED;
 
         if (etAmountMin.getText().length() > 0) {
-            min = Integer.valueOf(etAmountMin.getText().toString());
+            min = Integer.parseInt(etAmountMin.getText().toString());
         }
         if (etAmountMax.getText().length() > 0) {
-            max = Integer.valueOf(etAmountMax.getText().toString());
+            max = Integer.parseInt(etAmountMax.getText().toString());
         }
 
         if (min != NOT_SPECIFIED && max != NOT_SPECIFIED) {
@@ -203,14 +203,11 @@ public class TransFilterActivity extends UpButtonActivity {
         etAmountMax = (EditText) findViewById(R.id.etFilterAmountMax);
         spCurrency = (Spinner) findViewById(R.id.spFilterCurrency);
         Button btApply = (Button) findViewById(R.id.btApply);
-        btApply.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkValuesAndApply()) {
-                    finish();
-                } else {
-                    showErrorDlg(errorMsg);
-                }
+        btApply.setOnClickListener(v -> {
+            if (checkValuesAndApply()) {
+                finish();
+            } else {
+                showErrorDlg(errorMsg);
             }
         });
 
@@ -289,20 +286,14 @@ public class TransFilterActivity extends UpButtonActivity {
         }
         spCurrency.setSelection(index);
 
-        findViewById(R.id.btnClearBeginDate).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                etFilterDateBegin.setText("");
-                etFilterTimeBegin.setText("");
-            }
+        findViewById(R.id.btnClearBeginDate).setOnClickListener(v -> {
+            etFilterDateBegin.setText("");
+            etFilterTimeBegin.setText("");
         });
 
-        findViewById(R.id.btnClearEndDate).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                etFilterDateEnd.setText("");
-                etFilterTimeEnd.setText("");
-            }
+        findViewById(R.id.btnClearEndDate).setOnClickListener(v -> {
+            etFilterDateEnd.setText("");
+            etFilterTimeEnd.setText("");
         });
     }
 
@@ -326,8 +317,8 @@ public class TransFilterActivity extends UpButtonActivity {
     }
 
     private class DateClickListener implements OnClickListener {
-        private EditText etDate;
-        private EditText etTime;
+        private final EditText etDate;
+        private final EditText etTime;
 
         public DateClickListener(EditText etDate, EditText etTime) {
             this.etDate = etDate;
@@ -349,8 +340,8 @@ public class TransFilterActivity extends UpButtonActivity {
     }
 
     private class OnFilterDateSetListener implements DatePickerDialog.OnDateSetListener {
-        private EditText etDate;
-        private EditText etTime;
+        private final EditText etDate;
+        private final EditText etTime;
 
         public OnFilterDateSetListener(EditText etDate, EditText etTime) {
             this.etDate = etDate;
@@ -372,8 +363,8 @@ public class TransFilterActivity extends UpButtonActivity {
     }
 
     private class TimeClickListener implements OnClickListener {
-        private EditText etTime;
-        private EditText etDate;
+        private final EditText etTime;
+        private final EditText etDate;
 
         public TimeClickListener(EditText etTime, EditText etDate) {
             this.etTime = etTime;
@@ -395,8 +386,8 @@ public class TransFilterActivity extends UpButtonActivity {
     }
 
     private class OnFilterTimeSetListener implements TimePickerDialog.OnTimeSetListener {
-        private EditText etTime;
-        private EditText etDate;
+        private final EditText etTime;
+        private final EditText etDate;
 
         public OnFilterTimeSetListener(EditText etTime, EditText etDate) {
             this.etTime = etTime;
@@ -425,4 +416,3 @@ public class TransFilterActivity extends UpButtonActivity {
         builder.show();
     }
 }
-

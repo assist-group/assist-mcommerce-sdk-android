@@ -128,7 +128,7 @@ public class AssistTokenPayProcessor extends AssistBaseProcessor {
             Log.e(TAG, "Encoding error", e);
         }
 
-        Log.d(TAG, "Request:" + content.toString());
+        Log.d(TAG, "Request:" + content);
 
         return content.toString();
     }

@@ -3,10 +3,10 @@ package ru.assisttech.sdk.processor;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -123,8 +123,8 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
     @SuppressLint("SetJavaScriptEnabled")
     private void initUI() {
         setContentView(R.layout.web_activity);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        placeholder = (FrameLayout) findViewById(R.id.web_fragment);
+        progressBar = findViewById(R.id.progress_bar);
+        placeholder = findViewById(R.id.web_fragment);
 
         if (webView == null) {
             webView = new WebView(this);
@@ -269,18 +269,11 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.dlg_title_warning));
         builder.setMessage(getString(R.string.dlg_msg_stop_payment_question));
-        builder.setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                webProcessor.stopPayment();
-                finish();
-            }
+        builder.setPositiveButton(getString(android.R.string.yes), (dialog, which) -> {
+            webProcessor.stopPayment();
+            finish();
         });
-        builder.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        builder.setNegativeButton(getString(android.R.string.no), (dialog, which) -> {});
         AlertDialog dlg = builder.create();
         dlg.show();
     }
@@ -297,7 +290,7 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
     private class PayWebChromeClient extends WebChromeClient {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
-            Log.d(TAG, "Progress: " + Integer.toString(newProgress));
+            Log.d(TAG, "Progress: " + newProgress);
             super.onProgressChanged(view, newProgress);
         }
     }
@@ -323,6 +316,11 @@ public class WebViewActivity extends Activity implements AssistWebProcessor.WebC
                 return true;
             } else if (url.contains("body.cfm")) {
                 webProcessor.parseErrorPage(StringToUrl(url));
+                return true;
+            } else if (url.contains("mirpay://pay.mironline.ru")) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
                 return true;
             } else {
                 return false;

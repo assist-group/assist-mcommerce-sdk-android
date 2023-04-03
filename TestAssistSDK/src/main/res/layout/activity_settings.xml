@@ -61,6 +61,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="QIWI Beeline Payment"/>
+        <CheckBox
+            android:id="@+id/chMirPayPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MirPay Payment"/>
 
         <!-- RECURRING -->
 

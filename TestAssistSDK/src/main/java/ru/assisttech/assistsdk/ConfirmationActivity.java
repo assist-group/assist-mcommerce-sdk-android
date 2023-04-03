@@ -3,7 +3,6 @@ package ru.assisttech.assistsdk;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -15,13 +14,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import com.ekassir.mirpaysdk.client.MirApp;
 import com.github.dmstocking.optional.java.util.Optional;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
@@ -41,8 +39,10 @@ import com.samsung.android.sdk.samsungpay.v2.payment.sheet.AmountBoxControl;
 import com.samsung.android.sdk.samsungpay.v2.payment.sheet.AmountConstants;
 import com.samsung.android.sdk.samsungpay.v2.payment.sheet.CustomSheet;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -89,6 +89,11 @@ public class ConfirmationActivity extends FragmentActivity {
     private PaymentManager paymentManager;
     final String serviceId = "c84b694b18674b8f92e598";
 
+    // Mir Pay
+    private Button btMirPay;
+    private static final int MIR_REQUEST_CODE = 100;
+    private MirPay mp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,24 +138,45 @@ public class ConfirmationActivity extends FragmentActivity {
             }
 
             Button btPayWeb = findViewById(R.id.btPay);
-            btPayWeb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    payWeb();
-                }
-            });
+            btPayWeb.setOnClickListener(v -> payWeb());
 
             enableGooglePay();
             enableSamsungPay();
+            enableMirPay();
         } else {
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         }
     }
 
+    private void enableMirPay() {
+        btMirPay = findViewById(R.id.btMirPay);
+        if (MirApp.isMirPayInstalled(this)) {
+            btMirPay.setOnClickListener(
+                    view -> {
+                        String privateKey = "TODO"; // TODO приватный ключ, использованный для генерации JWKS в ЛК Assist
+                        String jwks = "TODO"; // TODO JWKS необходимо сгенерировать и скачать в ЛК Assist
+                        String merchantId = data.getMerchantID();
+                        mp = new MirPay(jwks, privateKey, merchantId) {
+                            @Override
+                            public void runMirPay(@NotNull Intent intent) {
+                                startActivityForResult(intent, MIR_REQUEST_CODE);
+                            }
+                            @Override
+                            public void doWithToken(@NotNull String result) {
+                                payToken(result, PaymentTokenType.MIR_PAY);
+                            }
+                        };
+                        String amount = data.getFields().get(FieldName.OrderAmount);
+                        int formattedAmount =
+                                new BigDecimal(amount).multiply(new BigDecimal(100)).intValue();
+                        mp.pay(this, data.getFields().get(FieldName.OrderNumber), formattedAmount);
+                    });
+            btMirPay.setVisibility(View.VISIBLE);
+        }
+    }
 
     private void enableGooglePay() {
-
         // initialize a Google Pay API client for an environment suitable for testing
         paymentsClient = Wallet.getPaymentsClient(
                 this,
@@ -171,27 +197,19 @@ public class ConfirmationActivity extends FragmentActivity {
         }
         Task<Boolean> task = paymentsClient.isReadyToPay(request);
         task.addOnCompleteListener(
-                new OnCompleteListener<Boolean>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Boolean> task) {
-                        try {
-                            boolean result = task.getResult(ApiException.class);
-                            if (result) {
-                                // show Google as a payment option
-                                btGooglePay = findViewById(R.id.btGooglePay);
-                                btGooglePay.setOnClickListener(
-                                        new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                getOrderData(data.getFields().get(FieldName.OrderNumber));
-                                            }
-                                        });
-                                btGooglePay.setVisibility(View.VISIBLE);
-                            }
-                        } catch (ApiException exception) {
-                            // handle developer errors
-                            Log.e(TAG, "Checking GooglePay feature error",exception);
+                t -> {
+                    try {
+                        boolean result = t.getResult(ApiException.class);
+                        if (result) {
+                            // show Google as a payment option
+                            btGooglePay = findViewById(R.id.btGooglePay);
+                            btGooglePay.setOnClickListener(
+                                    view -> getOrderData(data.getFields().get(FieldName.OrderNumber)));
+                            btGooglePay.setVisibility(View.VISIBLE);
                         }
+                    } catch (ApiException exception) {
+                        // handle developer errors
+                        Log.e(TAG, "Checking GooglePay feature error",exception);
                     }
                 });
     }
@@ -223,19 +241,13 @@ public class ConfirmationActivity extends FragmentActivity {
                 }
             });
         }
-        btSamsungPay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startSamsungPay();
-            }
-        });
+        btSamsungPay.setOnClickListener(view -> startSamsungPay());
     }
 
     /**
      * Handle a resolved activity from the Google Pay payment sheet
      *
-     * @param requestCode the request code originally supplied to AutoResolveHelper in
-     *     requestPayment()
+     * @param requestCode the request code originally supplied to AutoResolveHelper in requestPayment()
      * @param resultCode the result code returned by the Google Pay API
      * @param data an Intent from the Google Pay API containing payment or error data
      * @see <a href="https://developer.android.com/training/basics/intents/result">Getting a result
@@ -278,6 +290,14 @@ public class ConfirmationActivity extends FragmentActivity {
                 default:
                     Log.d("TAG", "DEFAULT");
                     // Do nothing.
+            }
+        } else if (requestCode == MIR_REQUEST_CODE) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    Log.d("TAG", "RESULT_OK");
+                    mp.setResult(data);
+                default:
+                    Log.d("TAG", "DEFAULT");
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -355,13 +375,10 @@ public class ConfirmationActivity extends FragmentActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(dlgTitle);
         builder.setMessage(dlgMessage);
-        builder.setNeutralButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                if (finish) {
-                    finish();
-                }
+        builder.setNeutralButton(getString(android.R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
+            if (finish) {
+                finish();
             }
         });
         builder.show();
@@ -447,7 +464,7 @@ public class ConfirmationActivity extends FragmentActivity {
     private void processSamsungPayStatus(int status) {
         switch (status) {
             case SpaySdk.SPAY_NOT_SUPPORTED:
-                btSamsungPay.setVisibility(View.INVISIBLE);
+                btSamsungPay.setVisibility(View.GONE);
                 break;
             case SpaySdk.SPAY_NOT_READY:
                 int extraReason = bundle.getInt(SpaySdk.EXTRA_ERROR_REASON);
@@ -459,10 +476,10 @@ public class ConfirmationActivity extends FragmentActivity {
                         samsungPay.activateSamsungPay();
                         break;
                     default:
-                        btSamsungPay.setVisibility(View.INVISIBLE);
+                        btSamsungPay.setVisibility(View.GONE);
                         Log.e(TAG, "Samsung PAY is not ready, extra reason: " + extraReason);
                 }
-                btSamsungPay.setVisibility(View.INVISIBLE);
+                btSamsungPay.setVisibility(View.GONE);
                 break;
             case SpaySdk.SPAY_READY:
                 // Samsung Pay is ready
@@ -470,7 +487,7 @@ public class ConfirmationActivity extends FragmentActivity {
                 break;
             default:
                 // Not expected result
-                btSamsungPay.setVisibility(View.INVISIBLE);
+                btSamsungPay.setVisibility(View.GONE);
                 break;
         }
     }

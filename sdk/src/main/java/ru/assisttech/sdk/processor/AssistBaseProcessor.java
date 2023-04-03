@@ -14,10 +14,10 @@ import ru.assisttech.sdk.storage.AssistTransaction;
  */
 public abstract class AssistBaseProcessor {
 
-    private Context context;
+    private final Context context;
     private Activity callerActivity;
 
-    private AssistProcessorEnvironment environment;
+    private final AssistProcessorEnvironment environment;
     private AssistProcessorListener listener;
     private AssistNetworkEngine ne;
     private AssistTransaction transaction;

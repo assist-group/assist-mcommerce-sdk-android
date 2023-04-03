@@ -44,12 +44,12 @@ public class TransactionsActivity extends UpButtonActivity implements LoaderMana
 
     private TransactionSimpleAdapter transactionsAdapter;
 
-	private String[] from = new String[] {AssistTransactionStorageImpl.COLUMN_ORDER_DATE_DEVICE,
+	private final String[] from = new String[] {AssistTransactionStorageImpl.COLUMN_ORDER_DATE_DEVICE,
                                           AssistTransactionStorageImpl.COLUMN_ORDER_NUMBER,
                                           AssistTransactionStorageImpl.COLUMN_ORDER_AMOUNT,
                                           AssistTransactionStorageImpl.COLUMN_ORDER_CURRENCY};
 
-	private int[] to = new int[] {R.id.tvTransItemOrderDate,
+	private final int[] to = new int[] {R.id.tvTransItemOrderDate,
                                   R.id.tvTransItemOrderNumber,
                                   R.id.tvTransItemOrderAmount,
                                   R.id.tvTransItemOrderCurrency};
@@ -215,10 +215,10 @@ public class TransactionsActivity extends UpButtonActivity implements LoaderMana
                     view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.transaction_napproved));
 					break;
 			}
-            TextView tvAmount = (TextView)view.findViewById(R.id.tvTransItemOrderAmount);
+            TextView tvAmount = view.findViewById(R.id.tvTransItemOrderAmount);
             tvAmount.setText(AssistTransaction.formatAmount(t.getOrderAmount()));
 
-            ImageView ivFilterIcon = (ImageView)view.findViewById(R.id.ivFilterIcon);
+            ImageView ivFilterIcon = view.findViewById(R.id.ivFilterIcon);
             if (storage.getFilter().match(t)) {
                 ivFilterIcon.setVisibility(View.VISIBLE);
             } else {
@@ -233,18 +233,11 @@ public class TransactionsActivity extends UpButtonActivity implements LoaderMana
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Удаление транзакций");
 		builder.setMessage("Действие не может быть отменено!");
-		builder.setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                storage.deleteTransactions(deleteFilter);
-                updateList();
-            }
+		builder.setPositiveButton("Удалить", (dialog, which) -> {
+            storage.deleteTransactions(deleteFilter);
+            updateList();
         });
-		builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+		builder.setNegativeButton("Отмена", (dialog, which) -> {});
 		builder.show();
 	}
 }
